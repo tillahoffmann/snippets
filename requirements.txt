@@ -20,6 +20,8 @@ packaging==23.1
     # via pytest
 pluggy==1.0.0
     # via pytest
+psutil==5.9.5
+    # via snippets
 pycodestyle==2.10.0
     # via flake8
 pyflakes==3.0.1
