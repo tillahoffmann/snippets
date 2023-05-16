@@ -28,4 +28,4 @@ jobs:
       - name: Lint the code.
         run: flake8
       - name: Run tests.
-        run: pytest -v
+        run: pytest -v --cov=snippets --cov-report=term-missing --cov-fail-under=100
