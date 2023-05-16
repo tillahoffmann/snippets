@@ -1,6 +1,8 @@
 import multiprocessing
+from pathlib import Path
 import pytest
 from snippets.call_with_timeout import call_with_timeout, _wrapper
+import subprocess
 import time
 from typing import Optional
 
@@ -36,3 +38,14 @@ def test_wrapper() -> None:
     assert not success
     # These are not the same object because the exception has been pickled; we compare the message.
     assert str(ex_recovered) == str(ex)
+
+
+def test_subprocess() -> None:
+    # Compile the binary.
+    here = Path(__file__).parent
+    args = ["cc", "-o", "test_call_with_timeout", "test_call_with_timeout.c"]
+    subprocess.check_call(args, cwd=here)
+
+    # Make sure we raise a timeout error due to the infinite while loop.
+    with pytest.raises(TimeoutError):
+        call_with_timeout(1, subprocess.check_call, ["./test_call_with_timeout"], cwd=here)
