@@ -1,2 +1,2 @@
 requirements.txt : requirements.in
-	pip-compile -v
+	pip-compile -v --resolver=backtracking
