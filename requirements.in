@@ -1,5 +1,6 @@
 -e file:.
 flake8
+importlib-metadata  # Required by sphinx on linux.
 pytest
 pytest-cov
 pytz  # Required by sphinx on linux.
