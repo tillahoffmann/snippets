@@ -34,15 +34,26 @@ def call_with_timeout(timeout: float, target: Callable, *args, **kwargs) -> Any:
 
     Args:
         timeout: Number of seconds to wait for a result.
-        target: Function to call.
+        target: Callable to evaluate which must be serializable with :mod:`pickle`.
         *args: Positional arguments passed to :code:`target`.
         **kwargs: Keyword arguments passed to :code:`target`.
 
     Returns:
-        result: Return value of :code:`target`.
+        Value returned by :code:`target(*args, **kwargs)`.
 
     Raises:
         TimeoutError: If the target does not complete within the timeout.
+
+    Example:
+
+        >>> from snippets.call_with_timeout import call_with_timeout
+        >>> call_with_timeout(1.0, " ".join, ["Hello", "world!"])
+        'Hello world!'
+        >>> from time import sleep
+        >>> call_with_timeout(1.0, sleep, 2.0)
+        Traceback (most recent call last):
+            ...
+        TimeoutError: call to <built-in function sleep> did not complete in 1.0 seconds
     """
     queue = multiprocessing.Queue()
     process = multiprocessing.Process(target=_wrapper, args=(queue, target, *args), kwargs=kwargs,
