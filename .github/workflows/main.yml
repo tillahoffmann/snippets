@@ -28,4 +28,8 @@ jobs:
       - name: Lint the code.
         run: flake8
       - name: Run tests.
-        run: pytest -v --cov=snippets --cov-report=term-missing --cov-fail-under=100
+        run: make tests
+      - name: Run doctests.
+        run: make doctests
+      - name: Build the documentation.
+        run: make docs
