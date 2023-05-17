@@ -1,10 +1,12 @@
 import multiprocessing
 from pathlib import Path
+import psutil
 import pytest
-from snippets.call_with_timeout import call_with_timeout, _wrapper
+from snippets.call_with_timeout import _wrapper, call_with_timeout, ZombieProcessError
 import subprocess
 import time
-from typing import Optional
+from typing import List, Optional
+from unittest import mock
 
 
 def test_timeout_expired() -> None:
@@ -40,12 +42,48 @@ def test_wrapper() -> None:
     assert str(ex_recovered) == str(ex)
 
 
-def test_subprocess() -> None:
-    # Compile the binary.
+@pytest.fixture
+def binary_path() -> Path:
+    # Compile the binary and yield the path.
     here = Path(__file__).parent
-    args = ["cc", "-o", "test_call_with_timeout", "test_call_with_timeout.c"]
+    output = here / "test_call_with_timeout"
+    args = ["cc", "-o", output, "test_call_with_timeout.c"]
     subprocess.check_call(args, cwd=here)
+    yield output
 
+    # Check if there are any lingering processes.
+    process = subprocess.run(["pgrep", "test_call_with_timeout"], text=True, capture_output=True)
+    if process.returncode == 0:
+        raise ZombieProcessError("lingering `test_call_with_timeout` process with pids: %s",
+                                 process.text)
+
+
+def test_subprocess_success(binary_path: Path) -> None:
+    process: subprocess.CompletedProcess = call_with_timeout(1, subprocess.run,
+                                                             [binary_path, "foobar"])
+    assert process.returncode == 42
+
+
+def test_subprocess(binary_path: Path) -> None:
     # Make sure we raise a timeout error due to the infinite while loop.
     with pytest.raises(TimeoutError):
-        call_with_timeout(1, subprocess.check_call, ["./test_call_with_timeout"], cwd=here)
+        call_with_timeout(1, subprocess.check_call, [binary_path])
+
+
+def test_subprocess_ignoring_sigterm(binary_path: Path) -> None:
+    # Make sure we raise a timeout error due to the infinite while loop.
+    with mock.patch("snippets.call_with_timeout.JOIN_TIMEOUT", 1), pytest.raises(TimeoutError):
+        call_with_timeout(1, subprocess.check_call, [binary_path, "SIGTERM"])
+
+
+def test_subprocess_ignoring_sigterm_zombie(binary_path: Path) -> None:
+    # Make sure we raise a timeout error due to the infinite while loop.
+    processes: List[psutil.Process] = []
+    with mock.patch("snippets.call_with_timeout.JOIN_TIMEOUT", 0.5), \
+            mock.patch("psutil.Process.kill", processes.append), pytest.raises(ZombieProcessError):
+        call_with_timeout(1, subprocess.check_call, [binary_path, "SIGTERM"])
+    assert len(processes) == 1
+    # Kill the process because we didn't due to the patch.
+    for process in processes:
+        process.kill()
+    psutil.wait_procs(processes, 1)

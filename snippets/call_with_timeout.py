@@ -5,6 +5,16 @@ import traceback
 from typing import Any, Callable
 
 
+# Time to wait for processes that have been terminated or killed in seconds.
+JOIN_TIMEOUT = 3
+
+
+class ZombieProcessError(RuntimeError):
+    """
+    A zombie process could not be terminated or killed.
+    """
+
+
 def _wrapper(queue: multiprocessing.Queue, target: Callable, *args, **kwargs) -> None:
     """
     Wrapper to execute a function in a subprocess.
@@ -45,14 +55,18 @@ def call_with_timeout(timeout: float, target: Callable, *args, **kwargs) -> Any:
         raise TimeoutError(f"call to {target} did not complete in {timeout} seconds")
     finally:
         if process.is_alive():
-            # Kill the process and all its children (https://stackoverflow.com/a/4229404/1150961).
+            # Try to terminate the process and all its children. If not possible, kill them.
+            # (https://stackoverflow.com/a/4229404/1150961).
             process = psutil.Process(process.pid)
             processes = [process, *process.children(recursive=True)]
-            for process in processes:
-                process.kill()
-            _, still_alive = psutil.wait_procs(processes, timeout=3)
-            if still_alive:  # pragma: no cover
-                raise RuntimeError(f"{len(still_alive)} processes are still alive")
+            for func in [psutil.Process.terminate, psutil.Process.kill]:
+                for process in processes:
+                    func(process)
+                _, processes = psutil.wait_procs(processes, timeout=JOIN_TIMEOUT)
+                if not processes:
+                    break
+            if processes:
+                raise ZombieProcessError(f"processes still alive: {len(processes)}")
     if not success:
         ex, tb = result
         raise RuntimeError(tb) from ex
