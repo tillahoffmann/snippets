@@ -51,7 +51,7 @@ def call_with_timeout(timeout: float, target: Callable, *args, **kwargs) -> Any:
             for process in processes:
                 process.kill()
             _, still_alive = psutil.wait_procs(processes, timeout=3)
-            if still_alive:
+            if still_alive:  # pragma: no cover
                 raise RuntimeError(f"{len(still_alive)} processes are still alive")
     if not success:
         ex, tb = result
