@@ -8,6 +8,8 @@ This repository contains useful, tested code snippets.
 
 .. autofunction:: snippets.call_with_timeout.call_with_timeout
 
+.. autofunction:: snippets.plot.plot_band
+
 .. autoclass:: snippets.timer.Timer
     :members:
 

@@ -1,6 +1,9 @@
 -e file:.
 flake8
 importlib-metadata  # Required by sphinx on linux.
+importlib_resources  # Required by matplotlib on linux.
+matplotlib  # Required by `plot`.
+numpy  # Required by `plot`.
 psutil  # Required by `call_with_timeout`.
 pytest
 pytest-cov
