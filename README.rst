@@ -10,3 +10,5 @@ This repository contains useful, tested code snippets.
 
 .. autoclass:: snippets.timer.Timer
     :members:
+
+.. autoclass:: snippets.util.raise_for_missing_modules

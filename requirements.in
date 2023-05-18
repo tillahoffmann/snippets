@@ -1,6 +1,7 @@
 -e file:.
 flake8
 importlib-metadata  # Required by sphinx on linux.
+psutil  # Required by `call_with_timeout`.
 pytest
 pytest-cov
 pytz  # Required by sphinx on linux.

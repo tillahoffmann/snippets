@@ -1,8 +1,12 @@
 import multiprocessing
-import psutil
 from queue import Empty
 import traceback
 from typing import Any, Callable
+from .util import raise_for_missing_modules
+
+
+with raise_for_missing_modules():
+    import psutil
 
 
 # Time to wait for processes that have been terminated or killed in seconds.
