@@ -50,14 +50,18 @@ def call_with_timeout(timeout: float, target: Callable, *args, **kwargs) -> Any:
 
     Example:
 
-        >>> from snippets.call_with_timeout import call_with_timeout
-        >>> call_with_timeout(1.0, " ".join, ["Hello", "world!"])
-        'Hello world!'
-        >>> from time import sleep
-        >>> call_with_timeout(1.0, sleep, 2.0)
-        Traceback (most recent call last):
-            ...
-        TimeoutError: call to <built-in function sleep> did not complete in 1.0 seconds
+        .. doctest::
+
+            >>> from snippets.call_with_timeout import call_with_timeout
+            >>> from time import sleep
+
+            >>> call_with_timeout(1.0, " ".join, ["Hello", "world!"])
+            'Hello world!'
+
+            >>> call_with_timeout(1.0, sleep, 2.0)
+            Traceback (most recent call last):
+                ...
+            TimeoutError: call to <built-in function sleep> did not complete in 1.0 seconds
     """
     queue = multiprocessing.Queue()
     process = multiprocessing.Process(target=_wrapper, args=(queue, target, *args), kwargs=kwargs,

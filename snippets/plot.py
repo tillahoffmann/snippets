@@ -30,12 +30,15 @@ def plot_band(x: np.ndarray, ys: np.ndarray, *, ax: Optional[Axes] = None, ralph
 
     Example:
 
-        >>> import numpy as np
-        >>> from snippets.plot import plot_band
-        >>> x = np.linspace(0, 2 * np.pi, 20)
-        >>> ys = np.sin(x) + np.random.normal(0, .25, (100, x.size))
-        >>> plot_band(x, ys)
-        (<matplotlib.lines.Line2D object ...>, <matplotlib.collections.PolyCollection object ...>)
+        .. doctest::
+
+            >>> import numpy as np
+            >>> from snippets.plot import plot_band
+
+            >>> x = np.linspace(0, 2 * np.pi, 20)
+            >>> ys = np.sin(x) + np.random.normal(0, .25, (100, x.size))
+            >>> plot_band(x, ys)
+            (<matplotlib.lines.Line2D ...>, <matplotlib.collections.PolyCollection ...>)
     """
     ax = ax or plt.gca()
     lower_, center_, upper_ = np.quantile(ys, [lower, center, upper], axis=0)

@@ -4,12 +4,15 @@ class raise_for_missing_modules():
 
     Example:
 
-        >>> from snippets.util import raise_for_missing_modules
-        >>> with raise_for_missing_modules():
-        ...     import xxx
-        Traceback (most recent call last):
-            ...
-        RuntimeError: install module `xxx` to use the snippet at `...`
+        .. doctest::
+
+            >>> from snippets.util import raise_for_missing_modules
+
+            >>> with raise_for_missing_modules():
+            ...     import xxx
+            Traceback (most recent call last):
+                ...
+            RuntimeError: install module `xxx` to use the snippet at `...`
     """
     def __enter__(self) -> None:
         pass
