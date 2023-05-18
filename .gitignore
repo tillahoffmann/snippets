@@ -161,3 +161,4 @@ cython_debug/
 
 tests/test_call_with_timeout
 playground/
+.DS_Store
