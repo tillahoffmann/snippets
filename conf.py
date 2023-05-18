@@ -5,7 +5,3 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.napoleon",
 ]
-exclude_patterns = [
-    ".git",
-    ".pytest_cache",
-]
