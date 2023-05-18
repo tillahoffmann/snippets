@@ -8,12 +8,15 @@ class Timer:
 
     Example:
 
-        >>> from snippets.timer import Timer
-        >>> from time import sleep
-        >>> with Timer() as timer:
-        ...     sleep(1)
-        >>> timer.duration
-        1...
+        .. doctest::
+
+            >>> from snippets.timer import Timer
+            >>> from time import sleep
+
+            >>> with Timer() as timer:
+            ...     sleep(1)
+            >>> timer.duration
+            1...
     """
     def __init__(self) -> None:
         self.start = None
