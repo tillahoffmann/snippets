@@ -54,9 +54,8 @@ def __main__(arg_list: Optional[List[str]] = None) -> None:
     if args.check_dois:
         dois = re.findall(DOI_PATTERN, bib)
         for doi in dois:
-            headers = {"Accept": "application/json"}
-            response = requests.get(f"https://dx.doi.org/{doi}", headers=headers)
-            if response.status_code != 200:
+            response = requests.get(f"https://dx.doi.org/{doi}", allow_redirects=False)
+            if response.status_code != 302:
                 print(f"doi {doi} could not be resolved")
 
 
