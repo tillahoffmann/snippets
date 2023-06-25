@@ -10,3 +10,4 @@ pytest-cov
 pytz  # Required by sphinx on linux.
 sphinx
 sphinxcontrib-shtest
+torch
