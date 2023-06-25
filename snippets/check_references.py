@@ -59,5 +59,5 @@ def __main__(arg_list: Optional[List[str]] = None) -> None:
                 print(f"doi {doi} could not be resolved")
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     __main__()
