@@ -11,6 +11,9 @@ Code Snippets
 
 .. autofunction:: snippets.call_with_timeout.call_with_timeout
 
+.. automodule:: snippets.param_dict
+    :members:
+
 .. autofunction:: snippets.plot.plot_band
 
 .. autoclass:: snippets.timer.Timer
