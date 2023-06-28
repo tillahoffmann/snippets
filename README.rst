@@ -6,10 +6,13 @@
 
 This repository contains useful, tested code snippets and command line tools.
 
-Code Snippets
--------------
+✂️ Code Snippets
+----------------
 
 .. autofunction:: snippets.call_with_timeout.call_with_timeout
+
+.. automodule:: snippets.empirical_distribution
+    :members:
 
 .. automodule:: snippets.param_dict
     :members:
@@ -21,7 +24,7 @@ Code Snippets
 
 .. autoclass:: snippets.util.raise_for_missing_modules
 
-Command Line Tools
-------------------
+🧑‍💻 Command Line Tools
+------------------------
 
 .. sh:: python -m snippets.check_references --help
