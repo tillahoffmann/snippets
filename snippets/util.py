@@ -1,3 +1,13 @@
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    import numpy as np
+    import torch as th
+
+    TensorLike = np.ndarray | th.Tensor
+
+
 class raise_for_missing_modules():
     """
     Helper class providing install instructions if a required package is missing.

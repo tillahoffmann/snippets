@@ -4,12 +4,10 @@ from typing import Dict, Tuple, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    import numpy as np
-    import torch as th
+    from .util import TensorLike
 
-    TensorLike = np.ndarray | th.Tensor
-    ParamDict = Dict[str, TensorLike]
 
+ParamDict = Dict[str, "TensorLike"]
 ShapeDict = Dict[str, Tuple[int]]
 
 
