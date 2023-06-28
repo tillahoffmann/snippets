@@ -28,15 +28,7 @@ class raise_for_missing_modules():
         pass
 
     def __exit__(self, exc_type, exc_val, traceback) -> None:
-        return
-        # Nothing to be done if there is no exception.
-        if not exc_val:
-            return
-
         if isinstance(exc_val, ModuleNotFoundError):
-
             message = f"install module `{exc_val.name}` to use the snippet at " \
                 f"`{traceback.tb_frame.f_code.co_filename}`"
             raise RuntimeError(message) from exc_val
-        # Reraise the original exception if not due to a missing module.
-        # raise
