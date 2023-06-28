@@ -8,7 +8,7 @@ psutil  # Required by `call_with_timeout`.
 pytest
 pytest-cov
 pytz  # Required by sphinx on linux.
-scipy<1.11
+scipy<1.11  # Required for python 3.8.
 sphinx
 sphinxcontrib-shtest
 torch
