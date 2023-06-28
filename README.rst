@@ -11,7 +11,7 @@ This repository contains useful, tested code snippets and command line tools.
 
 .. autofunction:: snippets.call_with_timeout.call_with_timeout
 
-.. automodule::
+.. automodule:: snippets.empirical_distribution
     :members:
 
 .. automodule:: snippets.param_dict
