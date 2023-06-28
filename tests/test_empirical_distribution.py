@@ -15,8 +15,9 @@ def pdf(x: np.ndarray):
     return stats.norm.pdf(x)
 
 
-def test_sample_empirical_pdf(x: np.ndarray, pdf: np.ndarray) -> None:
-    y = sample_empirical_pdf(x, pdf, (100, 17))
+@pytest.mark.parametrize("kind", ["linear", "quadratic", "cubic"])
+def test_sample_empirical_pdf(x: np.ndarray, pdf: np.ndarray, kind: str) -> None:
+    y = sample_empirical_pdf(x, pdf, (100, 17), kind)
     assert y.shape == (100, 17)
     assert stats.normaltest(y.ravel()).pvalue > 0.01
     assert np.unique(y).size == 1_700
