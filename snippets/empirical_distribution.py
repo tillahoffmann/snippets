@@ -1,4 +1,4 @@
-from typing import Tuple, TYPE_CHECKING
+from typing import Optional, Tuple, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from .util import TensorLike
@@ -10,9 +10,9 @@ with raise_for_missing_modules():
     from scipy import integrate, interpolate
 
 
-def sample_empirical_cdf(x: "TensorLike", cdf: "TensorLike", size: int | Tuple[int] | None,
-                         kind: str = "linear", random_state: np.random.RandomState | None = None) \
-        -> np.ndarray:
+def sample_empirical_cdf(x: "TensorLike", cdf: "TensorLike",
+                         size: Optional[Union[int, Tuple[int]]] = None, kind: str = "linear",
+                         random_state: Optional[np.random.RandomState] = None) -> np.ndarray:
     """
     Sample from a univariate empirical cumulative distribution function using interpolation of the
     inverse cumulative distribution function.
@@ -32,9 +32,9 @@ def sample_empirical_cdf(x: "TensorLike", cdf: "TensorLike", size: int | Tuple[i
     return interpolated(random_state.uniform(size=size))
 
 
-def sample_empirical_pdf(x: "TensorLike", pdf: "TensorLike", size: int | Tuple[int] | None,
-                         kind: str = "linear", random_state: np.random.RandomState | None = None) \
-        -> np.ndarray:
+def sample_empirical_pdf(x: "TensorLike", pdf: "TensorLike",
+                         size: Optional[Union[int, Tuple[int]]] = None, kind: str = "linear",
+                         random_state: Optional[np.random.RandomState] = None) -> np.ndarray:
     """
     Sample from a univariate empirical probability distribution function using interpolation of the
     inverse cumulative distribution function.
