@@ -13,3 +13,9 @@ doctests :
 
 tests :
 	pytest -v --cov=snippets --cov-report=term-missing --cov-fail-under=100
+
+MODULE_PATHS = $(filter-out __%,$(notdir $(wildcard snippets/*)))
+MODULES = ${MODULE_PATHS:.py=}
+
+$(addprefix coverage/,${MODULES}) : coverage/% :
+	pytest -v --cov=snippets.$* --cov-report=term-missing tests/test_$*.py
