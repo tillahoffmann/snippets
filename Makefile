@@ -2,6 +2,10 @@
 
 all : lint docs doctests tests
 
+clean :
+	rm -rf docs/_build htmlcov
+	rm .coverage*
+
 requirements.txt : requirements.in setup.py
 	pip-compile -v --resolver=backtracking
 
