@@ -14,6 +14,9 @@ doctests :
 tests :
 	pytest -v --cov=snippets --cov-report=term-missing --cov-fail-under=100
 
+lint:
+	flake8
+
 MODULE_PATHS = $(filter-out __%,$(notdir $(wildcard snippets/*)))
 MODULES = ${MODULE_PATHS:.py=}
 
