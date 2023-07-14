@@ -14,6 +14,8 @@ This repository contains useful, tested code snippets and command line tools.
 .. automodule:: snippets.empirical_distribution
     :members:
 
+.. autoclass:: snippets.nearest_neighbor_sampler.NearestNeighborSampler
+
 .. automodule:: snippets.param_dict
     :members:
 
