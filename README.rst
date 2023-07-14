@@ -3,6 +3,9 @@
 
 .. image:: https://github.com/tillahoffmann/snippets/actions/workflows/main.yml/badge.svg
     :target: https://github.com/tillahoffmann/snippets/
+.. image:: https://readthedocs.org/projects/scientific-snippets/badge/?version=latest
+    :target: https://scientific-snippets.readthedocs.io/en/latest/?badge=latest
+
 
 This repository contains useful, tested code snippets and command line tools.
 
