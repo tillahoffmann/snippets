@@ -1,5 +1,7 @@
 .PHONY : docs tests
 
+all : lint docs doctests tests
+
 requirements.txt : requirements.in setup.py
 	pip-compile -v --resolver=backtracking
 
