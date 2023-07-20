@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 @pytest.fixture(params=it.product(
     # Batch sizes.
-    [5, 17],
+    [10, 17],
     # Tensor shapes.
     [
         ((),),  # Just a scalar.
@@ -22,7 +22,7 @@ def dataset(request: pytest.FixtureRequest) -> TensorDataset:
     return TensorDataset(*tensors)
 
 
-@pytest.mark.parametrize("batch_size", [1, 7])
+@pytest.mark.parametrize("batch_size", [1, 2, 13])
 def test_tensor_data_loader_equivalence(dataset: TensorDataset, batch_size: int) -> None:
     loader1 = TensorDataLoader(dataset, batch_size)
     loader2 = DataLoader(dataset, batch_size)
