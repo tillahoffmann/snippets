@@ -24,6 +24,8 @@ This repository contains useful, tested code snippets and command line tools.
 
 .. autofunction:: snippets.plot.plot_band
 
+.. autofunction:: snippets.plot.rounded_path
+
 .. autoclass:: snippets.tensor_data_loader.TensorDataLoader
 
 .. autoclass:: snippets.timer.Timer
