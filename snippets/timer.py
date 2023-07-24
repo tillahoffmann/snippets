@@ -1,5 +1,6 @@
 from __future__ import annotations
 import time
+from typing import Optional
 
 
 class Timer:
@@ -19,8 +20,8 @@ class Timer:
             1...
     """
     def __init__(self) -> None:
-        self.start = None
-        self.end = None
+        self.start: Optional[float] = None
+        self.end: Optional[float] = None
 
     def __enter__(self) -> Timer:
         self.start = time.time()
