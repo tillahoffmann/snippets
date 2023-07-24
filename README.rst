@@ -9,6 +9,10 @@
 
 This repository contains useful, tested code snippets and command line tools.
 
+.. code-block:: bash
+
+    pip install git+https://github.com/tillahoffmann/snippets.git[@optional commit hash]
+
 ✂️ Code Snippets
 ----------------
 
@@ -23,6 +27,8 @@ This repository contains useful, tested code snippets and command line tools.
     :members:
 
 .. autofunction:: snippets.plot.plot_band
+
+.. autofunction:: snippets.plot.rounded_path
 
 .. autoclass:: snippets.tensor_data_loader.TensorDataLoader
 
