@@ -68,22 +68,30 @@ def rounded_path(vertices: np.ndarray, radius: float, shrink: float = 0, closed:
         .. plot::
             :include-source:
 
-            >>> import matplotlib as mpl
-            >>> from matplotlib import pyplot as plt
-            >>> import numpy as np
-            >>> from snippets.plot import rounded_path
-            >>>
-            >>> fig, ax = plt.subplots()
-            >>> vertices = np.asarray([(0, 0), (0, 1), (1, 1), (2, 0), (1.9, 0), (1, 0.5)])
-            >>> ax.plot(*vertices.T, marker=".", ls=":")
-            [<matplotlib.lines.Line2D object at 0x...>]
-            >>> path = rounded_path(vertices, 0.2, 0.1)
-            >>> ax.add_patch(mpl.patches.PathPatch(path, lw=3, fc="none", ec="C1", alpha=0.8))
-            <matplotlib.patches.PathPatch object at 0x...>
-            >>> ax.set_aspect("equal")
-            >>> fig.tight_layout()
+            import matplotlib as mpl
+            from matplotlib.patches import PathPatch
+            from matplotlib import pyplot as plt
+            import numpy as np
+            from snippets.plot import rounded_path
+
+            fig, ax = plt.subplots()
+            lines = [
+                [(0, 0), (0, 1), (1, 1), (2, 0), (1.9, 0), (1, 0.5)],
+                [(1.5, 1), (2, 1)],
+                [(0, 1.5), (1, 2), (2, 1.5)],
+            ]
+            for i, line in enumerate(lines):
+                color = f"C{i}"
+                ax.plot(*np.transpose(line), marker="o", ls="--", color=color)
+                path = rounded_path(line, 0.2, 0.1)
+                patch = PathPatch(path, lw=5, fc="none", ec=color, alpha=0.5)
+                ax.add_patch(patch)
+            ax.set_aspect("equal")
+            fig.tight_layout()
     """
     vertices = np.asarray(vertices, dtype=float)
+    if len(vertices) < 2:
+        raise ValueError(f"at least two vertices are required; got {len(vertices)}")
     parts = []
     for i, vertex in enumerate(vertices):
         # Calculate the unit vector from the current to the next point.
