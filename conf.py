@@ -1,5 +1,6 @@
 from docutils import nodes
 from docutils.parsers.rst.states import Inliner, Struct
+import inspect
 from sphinx.application import Sphinx
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -38,6 +39,7 @@ def docline(name: str, rawtext: str, text: str, lineno: int, inliner: Inliner,
     options = options or {}
     content = content or []
 
+    # Get the first line of the docstring.
     *modules, obj = text.split(".")
     modules = ".".join(modules)
     module = __import__(modules, fromlist=modules)
@@ -47,6 +49,13 @@ def docline(name: str, rawtext: str, text: str, lineno: int, inliner: Inliner,
         raise ValueError(f"{obj} does not have a docstring")
     line, *_ = docstring.strip().split("\n\n")
     line = line.replace("\n", " ")
+
+    # Prepend the reference to the underlying object.
+    if inspect.isfunction(obj):
+        refrole = "func"
+    else:
+        refrole = "class"
+    line = f":{refrole}:`~{text}`: {line}"
 
     memo = Struct(
         document=inliner.document,
