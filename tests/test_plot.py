@@ -1,9 +1,11 @@
 from matplotlib.lines import Line2D
 from matplotlib.collections import PolyCollection
 from matplotlib.path import Path
+from matplotlib import pyplot as plt
 import numpy as np
 import pytest
-from snippets.plot import plot_band, rounded_path
+from snippets.plot import label_axes, plot_band, rounded_path
+from typing import Iterable, Optional, Union
 
 
 def test_plot_band() -> None:
@@ -20,3 +22,15 @@ def test_rounded_path() -> None:
 
     with pytest.raises(ValueError, match="at least two"):
         rounded_path([], 0, 0)
+
+
+@pytest.mark.parametrize("labels", ["a", ("a", "b"), None])
+def test_label_axes(labels: Optional[Union[str, Iterable[str]]]) -> None:
+    # Try all sorts of different options to ensure full coverage.
+    _, axes = plt.subplots(2, 2)
+    labels = label_axes(axes.ravel(), labels, label_offset=2 if labels is None else None,
+                        offset=(0.05, 0.06))
+    assert len(labels) == (4 if labels is None else len(labels))
+
+    # Add a label to a single axes.
+    label_axes(axes[0, 0], "foo", loc="bottom right")

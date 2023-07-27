@@ -26,6 +26,8 @@ This repository contains useful, tested code snippets and command line tools.
 .. automodule:: snippets.param_dict
     :members:
 
+.. autofunction:: snippets.plot.label_axes
+
 .. autofunction:: snippets.plot.plot_band
 
 .. autofunction:: snippets.plot.rounded_path
