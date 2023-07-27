@@ -1,6 +1,6 @@
 .PHONY : docs tests
 
-all : lint docs doctests tests
+all : lint doctests docs tests
 
 clean :
 	rm -rf docs/_build htmlcov

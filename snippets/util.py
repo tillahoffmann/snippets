@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Union
+import textwrap
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 
 if TYPE_CHECKING:
@@ -32,3 +33,20 @@ class raise_for_missing_modules():
             message = f"install module `{exc_val.name}` to use the snippet at " \
                 f"`{traceback.tb_frame.f_code.co_filename}`"
             raise RuntimeError(message) from exc_val
+
+
+def get_first_docstring_paragraph(obj: Any) -> str:
+    """
+    Get the first paragraph of the docstring of an object.
+
+    Args:
+        obj: Object whose first docstring paragraph to get.
+
+    Returns:
+        First paragraph of the object's docstring.
+    """
+    doc: Optional[str] = getattr(obj, "__doc__", None)
+    if not doc:
+        raise ValueError(f"{obj} does not have a docstring")
+    doc, *_ = doc.split("\n\n")
+    return textwrap.dedent(doc).strip().replace("\n", " ")

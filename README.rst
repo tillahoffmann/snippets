@@ -16,28 +16,29 @@ This repository contains useful, tested code snippets and command line tools.
 ✂️ Code Snippets
 ----------------
 
-- :docline:`snippets.call_with_timeout.call_with_timeout`
-- :docline:`snippets.empirical_distribution.sample_empirical_cdf`
-- :docline:`snippets.empirical_distribution.sample_empirical_pdf`
-- :docline:`snippets.nearest_neighbor_sampler.NearestNeighborSampler`
-- :docline:`snippets.param_dict.from_param_dict`
-- :docline:`snippets.param_dict.to_param_dict`
-- :docline:`snippets.plot.label_axes`
-- :docline:`snippets.plot.plot_band`
-- :docline:`snippets.plot.rounded_path`
-- :docline:`snippets.tensor_data_loader.TensorDataLoader`
-- :docline:`snippets.timer.Timer`
+- :docitem:`snippets.call_with_timeout.call_with_timeout`
+- :docitem:`snippets.empirical_distribution.sample_empirical_cdf`
+- :docitem:`snippets.empirical_distribution.sample_empirical_pdf`
+- :docitem:`snippets.nearest_neighbor_sampler.NearestNeighborSampler`
+- :docitem:`snippets.param_dict.from_param_dict`
+- :docitem:`snippets.param_dict.to_param_dict`
+- :docitem:`snippets.plot.label_axes`
+- :docitem:`snippets.plot.plot_band`
+- :docitem:`snippets.plot.rounded_path`
+- :docitem:`snippets.tensor_data_loader.TensorDataLoader`
+- :docitem:`snippets.timer.Timer`
 
 🧑‍💻 Command Line Tools
 ------------------------
 
-.. sh:: python -m snippets.check_references --help
+- :docitem:`snippets.check_references.CheckReferences`
 
 .. toctree::
     :maxdepth: 1
     :hidden:
 
     docs/call_with_timeout
+    docs/check_references
     docs/empirical_distribution
     docs/nearest_neighbor_sampler
     docs/param_dict
