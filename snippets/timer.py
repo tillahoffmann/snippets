@@ -5,7 +5,7 @@ from typing import Optional
 
 class Timer:
     """
-    Timer that can be used as a context.
+    Measure elapsed time using a context.
 
     Example:
 

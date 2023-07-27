@@ -20,7 +20,7 @@ class NearestNeighborSampler(BaseEstimator):
             with `n_samples`).
         n_samples: Number of samples to draw (mutually exclusive with `frac`).
         minkowski_norm: Minkowski p-norm to use for queries (defaults to Euclidean distances).
-        **kdtree_kwargs: Keyword arguments passed to the KDTree constructor.
+        **kdtree_kwargs: Keyword arguments passed to the :class:`scipy.spatial.KDTree` constructor.
 
     Example:
 
@@ -40,7 +40,7 @@ class NearestNeighborSampler(BaseEstimator):
             (10, 20)
     """
     def __init__(self, *, frac: float | None = None, n_samples: int | None = None,
-                 minkowski_norm: float = 2, **kdtree_kwargs) -> None:
+                 minkowski_norm: float = 2, **kdtree_kwargs: Any) -> None:
         super().__init__()
         if (frac is None) == (n_samples is None):
             raise ValueError("Exactly one of `frac` and `n_samples` must be given.")
