@@ -16,30 +16,32 @@ This repository contains useful, tested code snippets and command line tools.
 ✂️ Code Snippets
 ----------------
 
-.. autofunction:: snippets.call_with_timeout.call_with_timeout
-
-.. automodule:: snippets.empirical_distribution
-    :members:
-
-.. autoclass:: snippets.nearest_neighbor_sampler.NearestNeighborSampler
-
-.. automodule:: snippets.param_dict
-    :members:
-
-.. autofunction:: snippets.plot.label_axes
-
-.. autofunction:: snippets.plot.plot_band
-
-.. autofunction:: snippets.plot.rounded_path
-
-.. autoclass:: snippets.tensor_data_loader.TensorDataLoader
-
-.. autoclass:: snippets.timer.Timer
-    :members:
-
-.. autoclass:: snippets.util.raise_for_missing_modules
+- :func:`~snippets.call_with_timeout.call_with_timeout`: :docline:`snippets.call_with_timeout.call_with_timeout`
+- :func:`~snippets.empirical_distribution.sample_empirical_cdf`: :docline:`snippets.empirical_distribution.sample_empirical_cdf`
+- :func:`~snippets.empirical_distribution.sample_empirical_pdf`: :docline:`snippets.empirical_distribution.sample_empirical_pdf`
+- :class:`~snippets.nearest_neighbor_sampler.NearestNeighborSampler`: :docline:`snippets.nearest_neighbor_sampler.NearestNeighborSampler`
+- :func:`~snippets.param_dict.from_param_dict`: :docline:`snippets.param_dict.from_param_dict`
+- :func:`~snippets.param_dict.to_param_dict`: :docline:`snippets.param_dict.to_param_dict`
+- :func:`~snippets.plot.label_axes`: :docline:`snippets.plot.label_axes`
+- :func:`~snippets.plot.plot_band`: :docline:`snippets.plot.plot_band`
+- :func:`~snippets.plot.rounded_path`: :docline:`snippets.plot.rounded_path`
+- :class:`~snippets.tensor_data_loader.TensorDataLoader`: :docline:`snippets.tensor_data_loader.TensorDataLoader`
+- :class:`~snippets.timer.Timer`: :docline:`snippets.timer.Timer`
 
 🧑‍💻 Command Line Tools
 ------------------------
 
 .. sh:: python -m snippets.check_references --help
+
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    docs/call_with_timeout
+    docs/empirical_distribution
+    docs/nearest_neighbor_sampler
+    docs/param_dict
+    docs/plot
+    docs/tensor_data_loader
+    docs/timer
+    docs/util

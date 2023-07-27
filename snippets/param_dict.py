@@ -21,6 +21,18 @@ def from_param_dict(params: "ParamDict", shapes: ShapeDict) -> "TensorLike":
 
     Returns:
         Tensor of concatenated, raveled parameters ordered by parameter name.
+
+    Example:
+
+        .. doctest::
+
+            >>> import torch
+            >>> from snippets.param_dict import from_param_dict
+
+            >>> params = {"b": torch.arange(12).reshape((3, 4)), "a": torch.arange(3)}
+            >>> shapes = {"b": (3, 4), "a": (3,)}
+            >>> from_param_dict(params, shapes)
+            tensor([ 0,  1,  2,  0, ..., 11])
     """
     if not params:
         raise ValueError("The parameter dictionary is empty.")
@@ -65,6 +77,18 @@ def to_param_dict(params: "TensorLike", shapes: ShapeDict) -> "ParamDict":
 
     Returns:
         Dictionary mapping parameter names to tensors with the specified shape.
+
+    Example:
+
+        .. doctest::
+
+            >>> import torch
+            >>> from snippets.param_dict import to_param_dict
+
+            >>> params = torch.arange(15)
+            >>> shapes = {"b": (3, 4), "a": (3,)}
+            >>> to_param_dict(params, shapes)  # doctest: +NORMALIZE_WHITESPACE
+            {'a': tensor([0, 1, 2]), 'b': tensor([[ 3,  4,  5,  6], ...])}
     """
     if not shapes:
         raise ValueError("The shape dictionary is empty.")

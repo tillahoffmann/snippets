@@ -72,17 +72,18 @@ def sample_empirical_pdf(x: "TensorLike", pdf: "TensorLike",
         -> np.ndarray:
     """
     Sample from a univariate empirical probability distribution function using interpolation of the
-    inverse cumulative distribution function.
+    inverse probability distribution function.
 
     Args:
         x: Ordered vector of random variable values corresponding to `pdf` values.
-        pdf: Cumulative distribution function values corresponding to `x` values.
+        pdf: Probability distribution function values corresponding to `x` values.
         size: Sample size to draw.
         kind: Interpolation method to use (see :class:`scipy.interpolate.inter1pd` for details).
         random_state: Random number generator state.
         tol: Maximum acceptable difference for the integrated cumulative distribution function to
             differ from 0 and the last value to differ from 1. Discrepancies may arise, for example,
-            due to numerical errors incurred integrating `pdf`.
+            due to numerical errors incurred integrating `pdf` (see :func:`.normalize_cdf` for
+            details).
 
     Returns:
         Sample the desired size.
