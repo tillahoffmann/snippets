@@ -1,6 +1,6 @@
 import pytest
 import re
-from snippets.check_references import __main__
+from snippets.check_references import CheckReferences
 from typing import List
 from unittest import mock
 
@@ -23,7 +23,7 @@ from unittest import mock
 def test_check_references_bbl(bib: str, bbl: str, patterns: List[str],
                               capsys: pytest.CaptureFixture) -> None:
     with mock.patch("pathlib.Path.read_text", side_effect=[bib, bbl]):
-        __main__(["bib-file", "bbl-file"])
+        CheckReferences.run(["bib-file", "bbl-file"])
 
     outerr = capsys.readouterr()
     for pattern in patterns:
@@ -37,7 +37,7 @@ def test_check_references(capsys: pytest.CaptureFixture) -> None:
     doi = {bla-bla},
     """
     with mock.patch("pathlib.Path.read_text", return_value=bib):
-        __main__(["bib-file", "--check-dois"])
+        CheckReferences.run(["bib-file", "--check-dois"])
 
     outerr = capsys.readouterr()
     assert "10.48550/arXiv.1804.06788" not in outerr.out

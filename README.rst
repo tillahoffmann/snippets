@@ -38,6 +38,7 @@ This repository contains useful, tested code snippets and command line tools.
     :hidden:
 
     docs/call_with_timeout
+    docs/check_references
     docs/empirical_distribution
     docs/nearest_neighbor_sampler
     docs/param_dict
