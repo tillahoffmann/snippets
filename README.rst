@@ -16,17 +16,17 @@ This repository contains useful, tested code snippets and command line tools.
 ✂️ Code Snippets
 ----------------
 
-- :func:`~snippets.call_with_timeout.call_with_timeout`: :docline:`snippets.call_with_timeout.call_with_timeout`
-- :func:`~snippets.empirical_distribution.sample_empirical_cdf`: :docline:`snippets.empirical_distribution.sample_empirical_cdf`
-- :func:`~snippets.empirical_distribution.sample_empirical_pdf`: :docline:`snippets.empirical_distribution.sample_empirical_pdf`
-- :class:`~snippets.nearest_neighbor_sampler.NearestNeighborSampler`: :docline:`snippets.nearest_neighbor_sampler.NearestNeighborSampler`
-- :func:`~snippets.param_dict.from_param_dict`: :docline:`snippets.param_dict.from_param_dict`
-- :func:`~snippets.param_dict.to_param_dict`: :docline:`snippets.param_dict.to_param_dict`
-- :func:`~snippets.plot.label_axes`: :docline:`snippets.plot.label_axes`
-- :func:`~snippets.plot.plot_band`: :docline:`snippets.plot.plot_band`
-- :func:`~snippets.plot.rounded_path`: :docline:`snippets.plot.rounded_path`
-- :class:`~snippets.tensor_data_loader.TensorDataLoader`: :docline:`snippets.tensor_data_loader.TensorDataLoader`
-- :class:`~snippets.timer.Timer`: :docline:`snippets.timer.Timer`
+- :docline:`snippets.call_with_timeout.call_with_timeout`
+- :docline:`snippets.empirical_distribution.sample_empirical_cdf`
+- :docline:`snippets.empirical_distribution.sample_empirical_pdf`
+- :docline:`snippets.nearest_neighbor_sampler.NearestNeighborSampler`
+- :docline:`snippets.param_dict.from_param_dict`
+- :docline:`snippets.param_dict.to_param_dict`
+- :docline:`snippets.plot.label_axes`
+- :docline:`snippets.plot.plot_band`
+- :docline:`snippets.plot.rounded_path`
+- :docline:`snippets.tensor_data_loader.TensorDataLoader`
+- :docline:`snippets.timer.Timer`
 
 🧑‍💻 Command Line Tools
 ------------------------
