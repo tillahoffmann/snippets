@@ -1,6 +1,7 @@
 from docutils import nodes
 from docutils.parsers.rst.states import Inliner, Struct
 import inspect
+from snippets.util import get_first_docstring_paragraph
 from sphinx.application import Sphinx
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -24,14 +25,14 @@ intersphinx_mapping = {
 
 
 def setup(app: Sphinx):
-    app.add_role("docline", docline)
+    app.add_role("docitem", docitem)
 
 
-def docline(name: str, rawtext: str, text: str, lineno: int, inliner: Inliner,
+def docitem(name: str, rawtext: str, text: str, lineno: int, inliner: Inliner,
             options: Optional[Dict[str, Any]] = None, content: Optional[List[str]] = None) \
         -> Tuple[List[nodes.Node], List[str]]:
     """
-    Extract the first line of the docstring with nested parsing based on
+    Extract the first paragraph of the docstring with nested parsing based on
     https://stackoverflow.com/a/68865718/1150961. See
     https://docutils.sourceforge.io/docs/howto/rst-roles.html#define-the-role-function for a
     description of the arguments.
@@ -44,18 +45,14 @@ def docline(name: str, rawtext: str, text: str, lineno: int, inliner: Inliner,
     modules = ".".join(modules)
     module = __import__(modules, fromlist=modules)
     obj = getattr(module, obj)
-    docstring: Optional[str] = getattr(obj, "__doc__", None)
-    if docstring is None:
-        raise ValueError(f"{obj} does not have a docstring")
-    line, *_ = docstring.strip().split("\n\n")
-    line = line.replace("\n", " ")
+    paragraph = get_first_docstring_paragraph(obj)
 
     # Prepend the reference to the underlying object.
     if inspect.isfunction(obj):
         refrole = "func"
     else:
         refrole = "class"
-    line = f":{refrole}:`~{text}`: {line}"
+    paragraph = f":{refrole}:`~{text}`: {paragraph}"
 
     memo = Struct(
         document=inliner.document,
@@ -63,6 +60,6 @@ def docline(name: str, rawtext: str, text: str, lineno: int, inliner: Inliner,
         language=inliner.language,
     )
     parent = nodes.inline(rawtext, '', **options)
-    processed, messages = inliner.parse(line, lineno, memo, parent)
+    processed, messages = inliner.parse(paragraph, lineno, memo, parent)
     parent += processed
     return [parent], messages
