@@ -1,4 +1,5 @@
-from typing import Optional, Tuple
+import string
+from typing import Iterable, List, Optional, Tuple, Union
 from .util import raise_for_missing_modules
 
 
@@ -8,6 +9,7 @@ with raise_for_missing_modules():
     from matplotlib.lines import Line2D
     from matplotlib.path import Path
     from matplotlib import pyplot as plt
+    from matplotlib.text import Text
     import numpy as np
 
 
@@ -115,3 +117,53 @@ def rounded_path(vertices: np.ndarray, radius: float, shrink: float = 0, closed:
             break
 
     return Path(*zip(*parts), closed=closed, readonly=readonly)
+
+
+def label_axes(axes: Union[Iterable[Axes], Axes],
+               labels: Optional[Union[Iterable[str], str]] = None, loc: str = 'top left',
+               offset: float = 0.05, label_offset: int = 0, **kwargs) -> List[Text]:
+    """
+    Add labels to axes.
+
+    Args:
+        axes: Iterable of matplotlib axes.
+        labels: Iterable of labels (defaults to lowercase letters in parentheses).
+        loc: Location of the label as a string (defaults to top left).
+        offset: Offset for positioning labels in axes coordinates.
+        label_offset: Index by which to offset labels.
+
+    Returns:
+        List of text labels.
+
+    Example:
+
+        .. plot::
+            :include-source:
+
+            from matplotlib import pyplot as plt
+            from snippets.plot import label_axes
+
+            fig, axes = plt.subplots(2, 2)
+            label_axes(axes[0])
+            label_axes(axes[1], label_offset=2)
+    """
+    if isinstance(axes, Axes):
+        axes = [axes]
+    if labels is None:
+        labels = [f'({x})' for x in string.ascii_lowercase]
+    elif isinstance(labels, str):
+        labels = [labels]
+    if label_offset is not None:
+        labels = labels[label_offset:]
+    if isinstance(offset, float):
+        xfactor = yfactor = offset
+    else:
+        xfactor, yfactor = offset
+    y, x = loc.split()
+    kwargs = {'ha': x, 'va': y, **kwargs}
+    xloc = xfactor if x == 'left' else (1 - xfactor)
+    yloc = yfactor if y == 'bottom' else (1 - yfactor)
+    elements = []
+    for ax, label in zip(axes, labels):
+        elements.append(ax.text(xloc, yloc, label, transform=ax.transAxes, **kwargs))
+    return elements
