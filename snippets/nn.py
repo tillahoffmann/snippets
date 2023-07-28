@@ -1,8 +1,11 @@
-from typing import Literal, Optional
+from typing import Literal, Optional, Type, TypeVar
 from .util import raise_for_missing_modules
 
 with raise_for_missing_modules():
     import torch
+
+
+S = TypeVar("S", bound="StopOnPlateau")
 
 
 class StopOnPlateau:
@@ -97,6 +100,25 @@ class StopOnPlateau:
             return candidate > best + self.threshold
         else:
             raise ValueError(self.mode, self.threshold_mode)
+
+    @classmethod
+    def from_scheduler(cls: Type[S], scheduler: torch.optim.lr_scheduler.ReduceLROnPlateau,
+                       patience_factor: float = 1, patience: Optional[int] = None) -> S:
+        """
+        Create a :class:`.StopOnPlateau` instance configured based on a
+        :class:`~torch.optim.lr_scheduler.ReduceLROnPlateau`.
+
+        Args:
+            scheduler: Learning rate scheduler whose configuration to copy.
+            patience_factor: Factor by which to scale the patience of the learning rate scheduler.
+            patience: Patience of the instance (takes precedence over :code:`patience_factor`).
+
+        Returns:
+            Instance configured based on supplied
+            :class:`~torch.optim.lr_scheduler.ReduceLROnPlateau`.
+        """
+        patience = patience or int(patience_factor * scheduler.patience)
+        return cls(scheduler.mode, patience, scheduler.threshold, scheduler.threshold_mode)
 
 
 class Affine(torch.nn.Module):

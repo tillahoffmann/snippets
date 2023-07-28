@@ -16,8 +16,7 @@ def test_stop_on_plateau(mode: str, patience: int, threshold: float, threshold_m
     optim = torch.optim.Adam(module.parameters())
     scheduler = ReduceLROnPlateau(optim, mode=mode, patience=patience, threshold=threshold,
                                   threshold_mode=threshold_mode)
-    stop = StopOnPlateau(mode=mode, patience=patience, threshold=threshold,
-                         threshold_mode=threshold_mode)
+    stop = StopOnPlateau.from_scheduler(scheduler)
 
     with mock.patch("torch.optim.lr_scheduler.ReduceLROnPlateau._reduce_lr") as _reduce_lr:
         while True:
