@@ -20,6 +20,8 @@ This repository contains useful, tested code snippets and command line tools.
 - :docitem:`snippets.empirical_distribution.sample_empirical_cdf`
 - :docitem:`snippets.empirical_distribution.sample_empirical_pdf`
 - :docitem:`snippets.nearest_neighbor_sampler.NearestNeighborSampler`
+- :docitem:`snippets.nn.Affine`
+- :docitem:`snippets.nn.StopOnPlateau`
 - :docitem:`snippets.param_dict.from_param_dict`
 - :docitem:`snippets.param_dict.to_param_dict`
 - :docitem:`snippets.plot.label_axes`
@@ -41,6 +43,7 @@ This repository contains useful, tested code snippets and command line tools.
     docs/check_references
     docs/empirical_distribution
     docs/nearest_neighbor_sampler
+    docs/nn
     docs/param_dict
     docs/plot
     docs/tensor_data_loader
