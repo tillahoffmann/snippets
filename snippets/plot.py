@@ -1,9 +1,11 @@
+import collections
 import string
 from typing import Iterable, List, Optional, Tuple, Union
 from .util import raise_for_missing_modules
 
 
 with raise_for_missing_modules():
+    from matplotlib.artist import Artist
     from matplotlib.axes import Axes
     from matplotlib.collections import PolyCollection
     from matplotlib.lines import Line2D
@@ -167,3 +169,74 @@ def label_axes(axes: Union[Iterable[Axes], Axes],
     for ax, label in zip(axes, labels):
         elements.append(ax.text(xloc, yloc, label, transform=ax.transAxes, **kwargs))
     return elements
+
+
+Point = collections.namedtuple("Point", ["x", "y"])
+Point.__doc__ = "Point in two dimensions."
+Point.x.__doc__ = "Horizontal coordinate."
+Point.y.__doc__ = "Vertical coordinate."
+
+
+def get_anchor(artist: Union[Artist, Text], hour: float) -> Point:
+    """
+    Get an anchor on the boundary of an artist at the given "hour".
+
+    Args:
+        artist: Artist on whose boundary to get an anchor. If a :class:`~matplotlib.text.Text`
+            instance and it has a bounding box patch, the bounding box patch is used.
+        hour: Direction of the anchor as the hour on a 12-hour clock.
+
+    Returns:
+        Location of the anchor.
+
+    .. note::
+
+        :meth:`matplotlib.Figure.draw_without_rendering` may need to be called for extents of
+        artists to be calculated correctly.
+
+    Example:
+
+        .. plot::
+            :include-source:
+
+            from matplotlib import pyplot as plt
+            import numpy as np
+            from snippets.plot import get_anchor
+
+            # Add some text to the plot.
+            fig, ax = plt.subplots()
+            texts = [
+                ax.text(0.1, 0.5, "hello", fontsize=40),
+                ax.text(0.6, 0.5, "world", fontsize=40, bbox={"boxstyle": "round,pad=0.5"})
+            ]
+            ax.set_xlim(0, 1)
+            ax.set_ylim(0, 1)
+
+            # Draw without rendering ensures the extent of all artists is computed.
+            fig.draw_without_rendering()
+
+            # Find the anchors at different positions and plot them.
+            hours = np.arange(12)
+            for text in texts:
+                anchors = [get_anchor(text, hour) for hour in hours]
+                ax.scatter(*np.transpose(anchors), c=hours, zorder=9)
+    """
+    ax = artist.axes
+    if isinstance(artist, Text):
+        artist = artist.get_bbox_patch() or artist
+
+    # Get the extent of the artist and find its center.
+    xmin, ymin, width, height = artist.get_window_extent().bounds
+    x = xmin + width / 2
+    y = ymin + height / 2
+
+    # Determine the displacement vector.
+    angle = 2 * np.pi * hour / 12
+    dx = np.sin(angle)
+    dy = np.cos(angle)
+    scale = 1 / (2 * max(abs(dy) / height, abs(dx) / width))
+    point = x + scale * dx, y + scale * dy
+
+    # Transform to the data coordinate system.
+    point = ax.transData.inverted().transform(point)
+    return Point(*point)

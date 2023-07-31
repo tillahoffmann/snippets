@@ -24,6 +24,7 @@ This repository contains useful, tested code snippets and command line tools.
 - :docitem:`snippets.nn.StopOnPlateau`
 - :docitem:`snippets.param_dict.from_param_dict`
 - :docitem:`snippets.param_dict.to_param_dict`
+- :docitem:`snippets.plot.get_anchor`
 - :docitem:`snippets.plot.label_axes`
 - :docitem:`snippets.plot.plot_band`
 - :docitem:`snippets.plot.rounded_path`
