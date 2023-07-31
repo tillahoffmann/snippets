@@ -240,3 +240,41 @@ def get_anchor(artist: Union[Artist, Text], hour: float) -> Point:
     # Transform to the data coordinate system.
     point = ax.transData.inverted().transform(point)
     return Point(*point)
+
+
+def arrow_path(path: Path, length: float, width: Optional[float] = None) -> Path:
+    """
+    Create an arrow at the end of a path.
+
+    Args:
+        path: Path to create an arrow for.
+        length: Length of the arrow.
+        width: Width of the arrow (defaults to an equilateral triangle).
+
+    Returns:
+        Path representing an arrow.
+
+    Example:
+
+        .. plot::
+            :include-source:
+
+            from matplotlib.patches import PathPatch
+            from matplotlib.path import Path
+            from matplotlib import pyplot as plt
+            from snippets.plot import arrow_path
+
+            fig, ax = plt.subplots()
+            path = Path([(0.2, 0.4), (0.9, 0.7)], [Path.MOVETO, Path.LINETO])
+            arrow = arrow_path(path, 0.1)
+            ax.add_patch(PathPatch(path, fc="none"))
+            ax.add_patch(PathPatch(arrow))
+            ax.set_aspect("equal")
+    """
+    width = 2 * length / np.sqrt(3) if width is None else width
+    *_, a, b = path.vertices
+    delta = b - a
+    delta /= np.linalg.norm(delta)
+    orth = delta[::-1] * [-1, 1]
+    vertices = [b, b - length * delta + width / 2 * orth, b - length * delta - width / 2 * orth, b]
+    return Path(vertices, [Path.MOVETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY], closed=True)
