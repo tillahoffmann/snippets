@@ -4,7 +4,7 @@ from matplotlib.path import Path
 from matplotlib import pyplot as plt
 import numpy as np
 import pytest
-from snippets.plot import get_anchor, label_axes, plot_band, rounded_path
+from snippets.plot import arrow_path, get_anchor, label_axes, plot_band, rounded_path
 from typing import Iterable, Optional, Union
 
 
@@ -53,3 +53,10 @@ def test_get_anchor() -> None:
     # Ensure the anchor is always further away if we have a bounding box.
     assert get_anchor(text, 3).x < get_anchor(padded, 3).x
     np.testing.assert_allclose(get_anchor(text, 3).y, get_anchor(padded, 3).y)
+
+
+def test_arrow_path() -> None:
+    path = rounded_path([(0, 0), (0, 1)], 0.2)
+    arrow = arrow_path(path, 0.2)
+    # Check for three tips plus the closing vertex.
+    assert len(arrow.vertices) == 4
