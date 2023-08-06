@@ -14,6 +14,7 @@ def test_bounded_kernel_density(n_features: int, bounds: bool) -> None:
     scores = estimator.score_samples(x)
     assert scores.shape == (100,)
     assert np.isscalar(estimator.score(x))
+    assert estimator.bandwidth_factor_ > 0
 
 
 @pytest.mark.parametrize("n_features", [1, 2, 3])

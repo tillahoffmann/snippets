@@ -73,12 +73,13 @@ def evaluate_bounded_kde_logpdf(kde: gaussian_kde, X: np.ndarray, bounds: np.nda
 
 class GaussianKernelDensity(BaseEstimator):
     """
-    Gaussian kernel density estimator using :class:`scipy.stats.gaussian_kde` as the base
+    Gaussian kernel density estimator using :class:`~scipy.stats.gaussian_kde` as the base
     implementation. This facilitates more sophisticated kernel covariances because
-    :class:`sklearn.neighbors.KernelDensity` only allows isotropic kernel bandwidths.
+    :class:`~sklearn.neighbors.KernelDensity` only allows isotropic kernel bandwidths.
 
     Args:
-        bandwidth: Bandwidth selection method or explicit bandwidth.
+        bandwidth: Bandwidth selection method or scalar factor (see
+            :class:`~scipy.stats.gaussian_kde` for details).
         bounds: Array of lower and upper bounds for each dimension (use :code:`nan` for unbounded or
             semi-bounded domains).
 
@@ -139,14 +140,25 @@ class GaussianKernelDensity(BaseEstimator):
         self.kde_ = gaussian_kde(X.T, self.bandwidth, sample_weight)
         return self
 
+    def _ensure_fitted(self) -> None:  # pragma: no cover
+        if self.kde_ is None:
+            raise NotFittedError
+
     @property
-    def n_features_in_(self):
+    def n_features_in_(self) -> int:
         """
         Number of features the density estimator was fit to.
         """
-        if self.kde_ is None:  # pragma: no cover
-            raise NotFittedError
+        self._ensure_fitted()
         return self.kde_.d
+
+    @property
+    def bandwidth_factor_(self) -> float:
+        """
+        Multiplicative bandwidth factor for the density estimator.
+        """
+        self._ensure_fitted()
+        return self.kde_.factor
 
     def score_samples(self, X: np.ndarray) -> np.ndarray:
         """
