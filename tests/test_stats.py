@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
+from scipy.stats import gaussian_kde
 from sklearn.neighbors import KernelDensity
-from snippets.stats import BoundedKernelDensity
+from snippets.stats import BoundedKernelDensity, evaluate_bounded_kde_logpdf
 
 
 @pytest.mark.parametrize("n_features", [1, 2, 3])
@@ -16,3 +17,12 @@ def test_bounded_kernel_density(n_features: int, bounds: bool) -> None:
 
     if not bounds:
         np.testing.assert_allclose(scores, KernelDensity().fit(x).score_samples(x))
+
+
+@pytest.mark.parametrize("n_features", [1, 2, 3])
+def test_evaluate_bounded_kde_logpdf(n_features: int) -> None:
+    x = np.random.normal(0, 1, (n_features, 100))
+    estimator = gaussian_kde(x)
+    bounds = [(0, 1) for _ in range(n_features)]
+    scores = evaluate_bounded_kde_logpdf(estimator, x, bounds)
+    assert scores.shape == (100,)

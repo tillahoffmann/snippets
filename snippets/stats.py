@@ -8,6 +8,7 @@ from .util import raise_for_missing_modules
 with raise_for_missing_modules():
     import numpy as np
     from scipy.special import logsumexp
+    from scipy.stats import gaussian_kde
     from sklearn.neighbors import KernelDensity
     from sklearn.utils import check_array
 
@@ -101,3 +102,55 @@ class BoundedKernelDensity(KernelDensity):
 
             scores.append(super().score_samples(np.transpose(reflected)))
         return logsumexp(scores, axis=0)
+
+
+def evaluate_bounded_kde_logpdf(kde: gaussian_kde, X: np.ndarray, bounds: np.ndarray) -> np.ndarray:
+    """
+    Evaluated the log probability of a kernel density estimate with bounded support.
+
+    Args:
+        kde: Kernel density estimate to evaluate.
+        X: Points at which to evaluate the kernel density estimate with shape
+            :code:`(n_features, n_samples)`.
+        bounds: Sequence of :code:`(lower, upper)` bounds, i.e., a matrix with shape
+            :code:`(n_features, 2)`.
+
+    Returns:
+        Log probability evaluated at :code:`X`.
+
+    Example:
+
+        .. plot::
+            :include-source:
+
+            from matplotlib import pyplot as plt
+            import numpy as np
+            from scipy.stats import gaussian_kde
+            from snippets.stats import evaluate_bounded_kde_logpdf
+
+            fig, ax = plt.subplots()
+            x = np.random.uniform(0, 1, 1000)
+            kde = gaussian_kde(x)
+            lin = np.linspace(0, 1)
+            ax.plot(lin, kde.evaluate(lin))
+            ax.plot(lin, np.exp(evaluate_bounded_kde_logpdf(kde, lin, (0, 1))))
+    """
+    bounds = np.atleast_2d(bounds)
+    assert bounds.shape == (kde.d, 2), \
+        f"Expected shape (n_features, 2) for `bounds` but got {bounds.shape}."
+    X = np.atleast_2d(X)
+    assert X.shape[0] == (kde.d), \
+        f"Expected shape (n_features={kde.d}, n_samples) for `X` but got {X.shape}."
+
+    reflections = [(lower, None, upper) for (lower, upper) in bounds]
+    scores = []
+    for reflection in product(*reflections):
+        reflected = []
+        for x, bound in zip(X, reflection):
+            # Apply the reflection.
+            if bound is not None and np.isfinite(bound):
+                x = 2 * bound - x
+            reflected.append(x)
+
+        scores.append(kde.logpdf(reflected))
+    return logsumexp(scores, axis=0)
