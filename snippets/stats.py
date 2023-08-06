@@ -138,9 +138,13 @@ def evaluate_bounded_kde_logpdf(kde: gaussian_kde, X: np.ndarray, bounds: np.nda
     bounds = np.atleast_2d(bounds)
     assert bounds.shape == (kde.d, 2), \
         f"Expected shape (n_features, 2) for `bounds` but got {bounds.shape}."
+    # Handle sample shapes just like scipy.stats.gaussian_kde does (see source of `logpdf`).
     X = np.atleast_2d(X)
+    n_features, n_samples = X.shape
+    if n_features != kde.d and n_features == 1 and n_samples == kde.d:
+        X = X.T
     assert X.shape[0] == (kde.d), \
-        f"Expected shape (n_features={kde.d}, n_samples) for `X` but got {X.shape}."
+        f"Expected shape (n_features={kde.d}, n_samples=...) for `X` but got {X.shape}."
 
     reflections = [(lower, None, upper) for (lower, upper) in bounds]
     scores = []
