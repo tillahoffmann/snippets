@@ -28,3 +28,18 @@ def test_evaluate_bounded_kde_logpdf(n_features: int) -> None:
     # Test single sample evaluation.
     x = np.random.uniform(0, 1, n_features)
     assert evaluate_bounded_kde_logpdf(estimator, x, bounds).shape == (1,)
+
+
+def test_bounded_normalization() -> None:
+    x = np.random.uniform(0, 1, (20, 1))
+    lin = np.linspace(0, 1, 500)
+
+    # Check that the normalization is correct with bounds...
+    estimator = GaussianKernelDensity(bounds=(0, 1)).fit(x)
+    norm = np.trapz(np.exp(estimator.score_samples(lin[:, None])), lin)
+    assert abs(norm - 1) < 1e-6
+
+    # ...and is wrong without bounds.
+    estimator = GaussianKernelDensity().fit(x)
+    norm = np.trapz(np.exp(estimator.score_samples(lin[:, None])), lin)
+    assert abs(norm - 1) > 0.01
