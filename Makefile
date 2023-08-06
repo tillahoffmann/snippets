@@ -18,6 +18,7 @@ doctests :
 	sphinx-build -W -b doctest . docs/_build
 
 tests :
+	rm -f .coverage*
 	pytest -v --cov=snippets --cov-report=term-missing --cov-fail-under=100
 
 lint:
