@@ -29,6 +29,7 @@ This repository contains useful, tested code snippets and command line tools.
 - :docitem:`snippets.plot.label_axes`
 - :docitem:`snippets.plot.plot_band`
 - :docitem:`snippets.plot.rounded_path`
+- :docitem:`snippets.stats.BoundedKernelDensity`
 - :docitem:`snippets.tensor_data_loader.TensorDataLoader`
 - :docitem:`snippets.timer.Timer`
 
@@ -48,6 +49,7 @@ This repository contains useful, tested code snippets and command line tools.
     docs/nn
     docs/param_dict
     docs/plot
+    docs/stats
     docs/tensor_data_loader
     docs/timer
     docs/util
