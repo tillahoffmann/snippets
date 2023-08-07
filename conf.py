@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 
 project = "snippets"
-master_doc = "README"
+root_doc = "README"
 extensions = [
     "matplotlib.sphinxext.plot_directive",
     "sphinx.ext.autodoc",
