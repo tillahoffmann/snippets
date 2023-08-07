@@ -29,7 +29,7 @@ This repository contains useful, tested code snippets and command line tools.
 - :docitem:`snippets.plot.label_axes`
 - :docitem:`snippets.plot.plot_band`
 - :docitem:`snippets.plot.rounded_path`
-- :docitem:`snippets.stats.BoundedKernelDensity`
+- :docitem:`snippets.stats.GaussianKernelDensity`
 - :docitem:`snippets.tensor_data_loader.TensorDataLoader`
 - :docitem:`snippets.timer.Timer`
 

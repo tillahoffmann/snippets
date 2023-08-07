@@ -1,4 +1,4 @@
 stats
 =====
 
-.. autoclass:: snippets.stats.BoundedKernelDensity
+.. autoclass:: snippets.stats.GaussianKernelDensity
