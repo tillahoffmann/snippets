@@ -73,15 +73,21 @@ def evaluate_bounded_kde_logpdf(kde: gaussian_kde, X: np.ndarray, bounds: np.nda
 
 class GaussianKernelDensity(BaseEstimator):
     """
-    Gaussian kernel density estimator using :class:`~scipy.stats.gaussian_kde` as the base
-    implementation. This facilitates more sophisticated kernel covariances because
-    :class:`~sklearn.neighbors.KernelDensity` only allows isotropic kernel bandwidths.
+    Gaussian kernel density estimator.
+
+    The implementation employs :class:`~scipy.stats.gaussian_kde` to facilitate more sophisticated
+    kernel covariances than supported by :class:`~sklearn.neighbors.KernelDensity` which only admits
+    isotropic kernels.
 
     Args:
         bandwidth: Bandwidth selection method or scalar factor (see
             :class:`~scipy.stats.gaussian_kde` for details).
         bounds: Array of lower and upper bounds for each dimension (use :code:`nan` for unbounded or
-            semi-bounded domains).
+            semi-bounded domains). Test samples are reflected at the supplied boundaries as part of
+            :meth:`score_samples` to account for probability mass that has "leaked out of" the
+            support (see
+            `Boneva et al. (1971) <https://doi.org/10.1111/j.2517-6161.1971.tb00855.x>`__
+            for details).
 
     Example:
 
