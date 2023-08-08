@@ -242,7 +242,8 @@ def get_anchor(artist: Union[Artist, Text], hour: float) -> Point:
     return Point(*point)
 
 
-def arrow_path(path: Path, length: float, width: Optional[float] = None) -> Path:
+def arrow_path(path: Path, length: float, width: Optional[float] = None, backward: bool = False) \
+        -> Path:
     """
     Create an arrow at the end of a path.
 
@@ -250,6 +251,7 @@ def arrow_path(path: Path, length: float, width: Optional[float] = None) -> Path
         path: Path to create an arrow for.
         length: Length of the arrow.
         width: Width of the arrow (defaults to an equilateral triangle).
+        backward: Create an arrow at the start of the path.
 
     Returns:
         Path representing an arrow.
@@ -266,13 +268,16 @@ def arrow_path(path: Path, length: float, width: Optional[float] = None) -> Path
 
             fig, ax = plt.subplots()
             path = Path([(0.2, 0.4), (0.9, 0.7)], [Path.MOVETO, Path.LINETO])
-            arrow = arrow_path(path, 0.1)
             ax.add_patch(PathPatch(path, fc="none"))
+
+            arrow = arrow_path(path, 0.1)
             ax.add_patch(PathPatch(arrow))
+            arrow = arrow_path(path, 0.1, backward=True)
+            ax.add_patch(PathPatch(arrow, fc="C1"))
             ax.set_aspect("equal")
     """
     width = 2 * length / np.sqrt(3) if width is None else width
-    *_, a, b = path.vertices
+    *_, a, b = reversed(path.vertices) if backward else path.vertices
     delta = b - a
     delta /= np.linalg.norm(delta)
     orth = delta[::-1] * [-1, 1]
