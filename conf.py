@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 project = "snippets"
 root_doc = "README"
+html_theme = "furo"
 extensions = [
     "matplotlib.sphinxext.plot_directive",
     "sphinx.ext.autodoc",
