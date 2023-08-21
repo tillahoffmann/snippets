@@ -7,7 +7,7 @@ clean :
 	rm .coverage*
 
 requirements.txt : requirements.in setup.py
-	pip-compile -v --resolver=backtracking
+	docker run --rm -it -v `pwd`:/workspace -w /workspace python:3.8 bash -c 'pip install pip-tools && pip-compile -v --resolver=backtracking'
 
 docs :
 	rm -rf docs/_build

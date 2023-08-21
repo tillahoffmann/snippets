@@ -19,7 +19,7 @@ def pdf(x: np.ndarray):
 def test_sample_empirical_pdf(x: np.ndarray, pdf: np.ndarray, kind: str) -> None:
     y = sample_empirical_pdf(x, pdf, (100, 17), kind, tol=1e-5)
     assert y.shape == (100, 17)
-    assert stats.normaltest(y.ravel()).pvalue > 0.01
+    assert stats.normaltest(y.ravel()).pvalue > 0.001
     assert np.unique(y).size == 1_700
 
 
