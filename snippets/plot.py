@@ -1,6 +1,6 @@
 import collections
 import string
-from typing import Iterable, List, Optional, Tuple, Union
+from typing import Dict, Iterable, List, Literal, Optional, Tuple, Union
 from .util import raise_for_missing_modules
 
 
@@ -9,6 +9,7 @@ with raise_for_missing_modules():
     from matplotlib.axes import Axes
     from matplotlib.collections import PolyCollection
     from matplotlib.lines import Line2D
+    from matplotlib.image import AxesImage
     from matplotlib.path import Path
     from matplotlib import pyplot as plt
     from matplotlib.text import Text
@@ -283,3 +284,84 @@ def arrow_path(path: Path, length: float, width: Optional[float] = None, backwar
     orth = delta[::-1] * [-1, 1]
     vertices = [b, b - length * delta + width / 2 * orth, b - length * delta - width / 2 * orth, b]
     return Path(vertices, [Path.MOVETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY], closed=True)
+
+
+def dependence_heatmap(samples: Dict[str, np.ndarray],
+                       method: Literal["corrcoef", "nmi"] = "corrcoef", ax: Optional[Axes] = None,
+                       labels: bool = True, lines: bool = True, xlabel_rotation: float = -90,
+                       ylabel_rotation: float = 0, **kwargs) -> AxesImage:
+    """
+    Show the dependence between parameters as a heatmap.
+
+    Args:
+        fit: Named parameter samples.
+        method: Method to estimate dependence between variables.
+        ax: Axes to use for plotting.
+        labels: Show parameter labels.
+        lines: Show lines between blocks of parameters.
+        xlabel_rotation: Rotation of x-axis labels for parameter names.
+        ylabel_rotation: Rotation of y-axis labels for parameter names.
+        **kwargs: Keyword arguments passed to :class:`.Axes.imshow`.
+
+    Example:
+
+        .. plot::
+            :include-source:
+
+            import numpy as np
+            from snippets.plot import dependence_heatmap
+
+            # Draw some correlated samples.
+            n = 25
+            cov = np.cov(np.random.normal(0, 1, (n, 100)))
+            samples = np.random.multivariate_normal(np.zeros(n), cov, 100)
+            samples = {
+                "a": samples[:, :10],
+                "b": samples[:, 10:19],
+                "c": samples[:, 19:],
+            }
+
+            # Show the dependence.
+            fig, ax = plt.subplots()
+            dependence_heatmap(samples)
+    """
+    ax = ax or plt.gca()
+
+    # Compute the correlation coefficient and mask the diagonal.
+    stacked = np.hstack([x[:, None] if x.ndim == 1 else x for x in samples.values()])
+
+    # Estimate dependence and limits for the colormap.
+    if method == "corrcoef":
+        dependence = np.corrcoef(stacked.T)
+        np.fill_diagonal(dependence, np.nan)
+
+        vmax = kwargs.setdefault("vmax", np.nanmax(np.abs(dependence)))
+        kwargs.setdefault("vmin", -vmax)
+        kwargs.setdefault("cmap", "coolwarm")
+    elif method == "nmi":
+        with raise_for_missing_modules():
+            from sklearn.feature_selection import mutual_info_regression
+        dependence = np.asarray([mutual_info_regression(stacked, x) for x in stacked.T])
+        diag = np.diag(dependence)
+        dependence /= (diag[:, None] + diag) / 2
+        np.fill_diagonal(dependence, np.nan)
+    else:  # pragma: no cover
+        raise ValueError(method)
+
+    # Plot the heatmap.
+    im = ax.imshow(dependence, **kwargs)
+
+    # Add lines and labels.
+    sizes = np.asarray([value[0].size for value in samples.values()])
+    locs = np.cumsum(sizes) - (sizes + 1) / 2
+
+    if lines:
+        for axxline in [ax.axhline, ax.axvline]:
+            for loc in np.cumsum(sizes):
+                axxline(loc - 1 / 2, color="gray", ls=":")
+
+    if labels:
+        for axis, rotation in [(ax.xaxis, xlabel_rotation), (ax.yaxis, ylabel_rotation)]:
+            axis.set_ticks(locs)
+            axis.set_ticklabels(samples, rotation=rotation)
+    return im
