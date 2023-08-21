@@ -4,7 +4,8 @@ from matplotlib.path import Path
 from matplotlib import pyplot as plt
 import numpy as np
 import pytest
-from snippets.plot import arrow_path, get_anchor, label_axes, plot_band, rounded_path
+from snippets.plot import arrow_path, dependence_heatmap, get_anchor, label_axes, plot_band, \
+    rounded_path
 from typing import Iterable, Optional, Union
 
 
@@ -60,3 +61,13 @@ def test_arrow_path() -> None:
     arrow = arrow_path(path, 0.2)
     # Check for three tips plus the closing vertex.
     assert len(arrow.vertices) == 4
+
+
+@pytest.mark.parametrize("method", ["corrcoef", "nmi"])
+def test_dependence_heatmap(method: str) -> None:
+    n = 23
+    cov = np.cov(np.random.normal(0, 1, (n, 100)))
+    samples = np.random.multivariate_normal(np.zeros(n), cov, 200)
+    a, b, c = np.array_split(samples, 3, axis=1)
+    im = dependence_heatmap({"a": a, "b": b, "c": c}, method=method)
+    assert im.get_array().shape == (n, n)
