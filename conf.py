@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Optional, Tuple
 
 
 project = "snippets"
-root_doc = "README"
 html_theme = "furo"
 extensions = [
     "matplotlib.sphinxext.plot_directive",
@@ -24,6 +23,7 @@ intersphinx_mapping = {
     "sklearn": ("https://scikit-learn.org/stable/", None),
     "torch": ("https://pytorch.org/docs/stable/", None),
 }
+exclude_patterns = ["README.rst"]
 
 
 def setup(app: Sphinx):
