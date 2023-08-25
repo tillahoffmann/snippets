@@ -328,7 +328,7 @@ def dependence_heatmap(samples: Dict[str, np.ndarray],
     ax = ax or plt.gca()
 
     # Compute the correlation coefficient and mask the diagonal.
-    stacked = np.hstack([x[:, None] if x.ndim == 1 else x for x in samples.values()])
+    stacked = np.hstack([x.reshape((x.shape[0], -1)) for x in samples.values()])
 
     # Estimate dependence and limits for the colormap.
     if method == "corrcoef":

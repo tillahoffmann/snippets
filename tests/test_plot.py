@@ -66,8 +66,10 @@ def test_arrow_path() -> None:
 @pytest.mark.parametrize("method", ["corrcoef", "nmi"])
 def test_dependence_heatmap(method: str) -> None:
     n = 23
-    cov = np.cov(np.random.normal(0, 1, (n, 100)))
-    samples = np.random.multivariate_normal(np.zeros(n), cov, 200)
-    a, b, c = np.array_split(samples, 3, axis=1)
-    im = dependence_heatmap({"a": a, "b": b, "c": c}, method=method)
-    assert im.get_array().shape == (n, n)
+    samples = {
+        "a": np.random.normal(0, 1, n),
+        "b": np.random.normal(0, 1, (n, 2)),
+        "c": np.random.normal(0, 1, (n, 2, 3)),
+    }
+    im = dependence_heatmap(samples, method=method)
+    assert im.get_array().shape == (9, 9)
