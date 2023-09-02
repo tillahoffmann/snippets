@@ -24,6 +24,7 @@ intersphinx_mapping = {
     "torch": ("https://pytorch.org/docs/stable/", None),
 }
 exclude_patterns = ["README.rst"]
+plot_include_source = True
 
 
 def setup(app: Sphinx):

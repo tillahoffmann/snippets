@@ -7,7 +7,7 @@ from .util import raise_for_missing_modules
 with raise_for_missing_modules():
     from matplotlib.artist import Artist
     from matplotlib.axes import Axes
-    from matplotlib.collections import PolyCollection
+    from matplotlib.collections import PathCollection, PolyCollection
     from matplotlib.lines import Line2D
     from matplotlib.image import AxesImage
     from matplotlib.path import Path
@@ -37,7 +37,6 @@ def plot_band(x: np.ndarray, ys: np.ndarray, *, ax: Optional[Axes] = None, ralph
     Example:
 
         .. plot::
-            :include-source:
 
             import numpy as np
             from snippets.plot import plot_band
@@ -71,7 +70,6 @@ def rounded_path(vertices: np.ndarray, radius: float, shrink: float = 0, closed:
     Example:
 
         .. plot::
-            :include-source:
 
             import matplotlib as mpl
             from matplotlib.patches import PathPatch
@@ -141,7 +139,6 @@ def label_axes(axes: Union[Iterable[Axes], Axes],
     Example:
 
         .. plot::
-            :include-source:
 
             from matplotlib import pyplot as plt
             from snippets.plot import label_axes
@@ -198,7 +195,6 @@ def get_anchor(artist: Union[Artist, Text], hour: float) -> Point:
     Example:
 
         .. plot::
-            :include-source:
 
             from matplotlib import pyplot as plt
             import numpy as np
@@ -260,7 +256,6 @@ def arrow_path(path: Path, length: float, width: Optional[float] = None, backwar
     Example:
 
         .. plot::
-            :include-source:
 
             from matplotlib.patches import PathPatch
             from matplotlib.path import Path
@@ -306,7 +301,6 @@ def dependence_heatmap(samples: Dict[str, np.ndarray],
     Example:
 
         .. plot::
-            :include-source:
 
             import numpy as np
             from snippets.plot import dependence_heatmap
@@ -365,3 +359,87 @@ def dependence_heatmap(samples: Dict[str, np.ndarray],
             axis.set_ticks(locs)
             axis.set_ticklabels(samples, rotation=rotation)
     return im
+
+
+def parameterization_mutual_info(x: np.ndarray, scale: np.ndarray, ax: Optional[Axes] = None,
+                                 labels: bool = True, **kwargs) \
+        -> Tuple[np.ndarray, np.ndarray, PathCollection]:
+    """
+    Scatter plot of the mutual information between scale and location parameters for centered and
+    non-centered parameterizations.
+
+    Args:
+        x: Centered parameter of interest.
+        scale: Scale parameter of the prior on :code:`x`.
+        ax: Axes to use for plotting.
+        labels: Add axis labels.
+        **kwargs: Keyword arguments passed to :class:`.Axes.scatter`.
+
+    Returns:
+        Tuple of mutual information between scale and centered parameter, mutual information between
+        scale and non-centered parameter, and points.
+
+    Notes:
+
+        Standard *centered* parameterizations in hierarchical models often exhibit "funnels" if the
+        data do not strongly inform each parameter individually (see
+        `here <https://mc-stan.org/docs/stan-users-guide/reparameterization.html>`__ for details).
+        Choosing between the *centered* and *non-centered* parameterizations is often challenging
+        without inspecting scatter plots between parameters and the scale parameter of the
+        corresponding prior. This function estimates the mutual information between the scale
+        :math:`\\sigma` of the prior and both the *centered* parameterization
+        :math:`x \\sim \\mathsf{Normal}\\left(0, \\sigma^2\\right)` and the *non-centered*
+        parameterization :math:`x = \\sigma z` with
+        :math:`z \\sim \\mathsf{Normal}\\left(0, 1\\right)`. The parameterization with the lower
+        mutual information is generally preferable because it decouples the parameters under the
+        posterior.
+
+    Example:
+
+        .. plot::
+
+            from matplotlib import pyplot as plt
+            import numpy as np
+            from snippets.plot import parameterization_mutual_info
+
+
+            fig, axes = plt.subplots(2, 2)
+
+            n = 1000
+            p = 10
+            scale = np.exp(np.random.normal(0, 1, n))
+
+            # Example parameters dominated by the data, i.e., `x` is independent of `scale`.
+            x1 = np.random.normal(0, 1, (n, p))
+            # Example parameters dominated by the prior, i.e., `x` is strongly informed by `scale`.
+            x2 = x1 * scale[:, None]
+
+            # Scatter the mutual information, lower is better.
+            for (ax1, ax2), x in zip(axes.T, [x1, x2]):
+                assert x.shape == (n, p)
+                assert scale.shape == (n,)
+                ax1.scatter(x[:, 0], scale)
+                ax1.set_yscale("log")
+                parameterization_mutual_info(x, scale, ax=ax2)
+            fig.tight_layout()
+    """
+    with raise_for_missing_modules():
+        from sklearn.feature_selection import mutual_info_regression
+
+    ax = ax or plt.gca()
+
+    x = np.asarray(x).reshape((len(x), -1))
+    # Evaluate the non-centered parameter.
+    z = x / np.asarray(scale)[:, None]
+
+    mix = mutual_info_regression(x, scale)
+    miz = mutual_info_regression(z, scale)
+    pts = ax.scatter(mix, miz, **kwargs)
+    mm = mix.min(), mix.max()
+    ax.plot(mm, mm, color="k", ls=":")
+
+    if labels:
+        ax.set_xlabel("$MI(x, \\sigma)$")
+        ax.set_ylabel("$MI(z = x / \\sigma, \\sigma)$")
+
+    return mix, miz, pts
