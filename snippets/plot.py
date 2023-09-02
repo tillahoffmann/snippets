@@ -7,7 +7,7 @@ from .util import raise_for_missing_modules
 with raise_for_missing_modules():
     from matplotlib.artist import Artist
     from matplotlib.axes import Axes
-    from matplotlib.collections import PolyCollection
+    from matplotlib.collections import PathCollection, PolyCollection
     from matplotlib.lines import Line2D
     from matplotlib.image import AxesImage
     from matplotlib.path import Path
@@ -37,7 +37,6 @@ def plot_band(x: np.ndarray, ys: np.ndarray, *, ax: Optional[Axes] = None, ralph
     Example:
 
         .. plot::
-            :include-source:
 
             import numpy as np
             from snippets.plot import plot_band
@@ -71,7 +70,6 @@ def rounded_path(vertices: np.ndarray, radius: float, shrink: float = 0, closed:
     Example:
 
         .. plot::
-            :include-source:
 
             import matplotlib as mpl
             from matplotlib.patches import PathPatch
@@ -141,7 +139,6 @@ def label_axes(axes: Union[Iterable[Axes], Axes],
     Example:
 
         .. plot::
-            :include-source:
 
             from matplotlib import pyplot as plt
             from snippets.plot import label_axes
@@ -198,7 +195,6 @@ def get_anchor(artist: Union[Artist, Text], hour: float) -> Point:
     Example:
 
         .. plot::
-            :include-source:
 
             from matplotlib import pyplot as plt
             import numpy as np
@@ -260,7 +256,6 @@ def arrow_path(path: Path, length: float, width: Optional[float] = None, backwar
     Example:
 
         .. plot::
-            :include-source:
 
             from matplotlib.patches import PathPatch
             from matplotlib.path import Path
@@ -306,7 +301,6 @@ def dependence_heatmap(samples: Dict[str, np.ndarray],
     Example:
 
         .. plot::
-            :include-source:
 
             import numpy as np
             from snippets.plot import dependence_heatmap

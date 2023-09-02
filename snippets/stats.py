@@ -31,7 +31,6 @@ def evaluate_bounded_kde_logpdf(kde: gaussian_kde, X: np.ndarray, bounds: np.nda
     Example:
 
         .. plot::
-            :include-source:
 
             from matplotlib import pyplot as plt
             import numpy as np
@@ -92,7 +91,6 @@ class GaussianKernelDensity(BaseEstimator):
     Example:
 
         .. plot::
-            :include-source:
 
             from matplotlib import pyplot as plt
             import numpy as np
