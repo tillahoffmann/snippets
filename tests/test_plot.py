@@ -4,8 +4,8 @@ from matplotlib.path import Path
 from matplotlib import pyplot as plt
 import numpy as np
 import pytest
-from snippets.plot import arrow_path, dependence_heatmap, get_anchor, label_axes, plot_band, \
-    rounded_path
+from snippets.plot import arrow_path, dependence_heatmap, get_anchor, label_axes, \
+    parameterization_mutual_info, plot_band, rounded_path
 from typing import Iterable, Optional, Union
 
 
@@ -73,3 +73,28 @@ def test_dependence_heatmap(method: str) -> None:
     }
     im = dependence_heatmap(samples, method=method)
     assert im.get_array().shape == (9, 9)
+
+
+@pytest.mark.parametrize("prior_dominated", [False, True])
+def test_parameterization_mutual_info(prior_dominated: bool) -> None:
+    n = 1000
+    p = 10
+    scale = np.exp(np.random.normal(0, 1, n))
+
+    # Example parameters dominated by the data, i.e., `x` is independent of `scale`.
+    x = np.random.normal(0, 1, (n, p))
+
+    if prior_dominated:
+        # Example parameters dominated by the prior, i.e., `x` is strongly informed by `scale`.
+        x = x * scale[:, None]
+
+    assert x.shape == (n, p)
+
+    _, ax = plt.subplots()
+    mix, miz, _ = parameterization_mutual_info(x, scale, ax=ax)
+
+    # If dominated by the prior, the centered parameterization must have higher mutual information.
+    if prior_dominated:
+        np.testing.assert_array_less(miz, mix)
+    else:
+        np.testing.assert_array_less(mix, miz)

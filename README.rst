@@ -28,6 +28,7 @@ This repository contains useful, tested code snippets and command line tools.
 - :docitem:`snippets.plot.dependence_heatmap`
 - :docitem:`snippets.plot.get_anchor`
 - :docitem:`snippets.plot.label_axes`
+- :docitem:`snippets.plot.parameterization_mutual_info`
 - :docitem:`snippets.plot.plot_band`
 - :docitem:`snippets.plot.rounded_path`
 - :docitem:`snippets.stats.GaussianKernelDensity`
