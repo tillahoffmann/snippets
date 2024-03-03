@@ -7,6 +7,7 @@ importlib_resources  # Required by matplotlib on linux.
 matplotlib  # Required by `plot`.
 numpy<1.25  # For python 3.8; required by `plot`.
 psutil  # Required by `call_with_timeout`.
+pypdf
 pytest
 pytest-cov
 pytz  # Required by sphinx on linux.
