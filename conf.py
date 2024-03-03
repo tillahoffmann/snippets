@@ -23,7 +23,10 @@ intersphinx_mapping = {
     "sklearn": ("https://scikit-learn.org/stable/", None),
     "torch": ("https://pytorch.org/docs/stable/", None),
 }
-exclude_patterns = ["README.rst"]
+exclude_patterns = [
+    "README.rst",
+    "venv",
+]
 plot_include_source = True
 
 
