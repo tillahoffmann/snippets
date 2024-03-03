@@ -39,12 +39,14 @@ This repository contains useful, tested code snippets and command line tools.
 ------------------------
 
 - :docitem:`snippets.check_references.CheckReferences`
+- :docitem:`snippets.check_pdf_hyperlinks.CheckPdfHyperlinks`
 
 .. toctree::
     :maxdepth: 1
     :hidden:
 
     docs/call_with_timeout
+    docs/check_pdf_hyperlinks
     docs/check_references
     docs/empirical_distribution
     docs/nearest_neighbor_sampler
