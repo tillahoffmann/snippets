@@ -156,7 +156,9 @@ tomli==2.0.1
     # via
     #   coverage
     #   pytest
-torch==2.2.1
+torch==2.2.1+cpu
+    # via -r requirements.in
+tqdm==4.66.2
     # via -r requirements.in
 typing-extensions==4.10.0
     # via

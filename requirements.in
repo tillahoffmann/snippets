@@ -16,3 +16,4 @@ scipy<1.11  # Required for python 3.8.
 sphinx<7.2  # Required for python 3.8.
 sphinxcontrib-shtest
 torch
+tqdm

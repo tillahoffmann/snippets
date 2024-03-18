@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+from tqdm import tqdm
 from typing import Generator, List, Optional, Tuple
 from .util import get_first_docstring_paragraph, raise_for_missing_modules
 
@@ -53,7 +54,7 @@ class CheckPdfHyperlinks:
             print(f"found {len(pagenumbers_and_urls)} urls in {filename}")
             invalid_urls = {}
             valid_urls = set()
-            for page, url in sorted(pagenumbers_and_urls):
+            for page, url in tqdm(sorted(pagenumbers_and_urls), desc="checking hyperlinks"):
                 if url in invalid_urls:
                     valid = False
                 elif url in valid_urls:

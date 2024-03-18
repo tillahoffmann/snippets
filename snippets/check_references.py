@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 import re
+from tqdm import tqdm
 from typing import List, Optional
 from .util import get_first_docstring_paragraph, raise_for_missing_modules
 
@@ -60,7 +61,7 @@ class CheckReferences:
         # Check dois if desired.
         if args.check_dois:
             dois = re.findall(DOI_PATTERN, bib)
-            for doi in dois:
+            for doi in tqdm(dois, desc="checking dois"):
                 response = requests.get(f"https://dx.doi.org/{doi}", allow_redirects=False)
                 if response.status_code != 302:
                     print(f"doi {doi} could not be resolved")
