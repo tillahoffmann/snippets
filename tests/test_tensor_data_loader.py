@@ -5,17 +5,19 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 
-@pytest.fixture(params=it.product(
-    # Batch sizes.
-    [10, 17],
-    # Tensor shapes.
-    [
-        ((),),  # Just a scalar.
-        ((9,),),  # A single vector per element.
-        ((7,), ()),  # A feature-outcome combination.
-        ((3, 4), (5, 7, 8), ()),  # A complex combination.
-    ],
-))
+@pytest.fixture(
+    params=it.product(
+        # Batch sizes.
+        [10, 17],
+        # Tensor shapes.
+        [
+            ((),),  # Just a scalar.
+            ((9,),),  # A single vector per element.
+            ((7,), ()),  # A feature-outcome combination.
+            ((3, 4), (5, 7, 8), ()),  # A complex combination.
+        ],
+    )
+)
 def dataset(request: pytest.FixtureRequest) -> TensorDataset:
     size, shapes = request.param
     tensors = [torch.randn(size, *shape) for shape in shapes]
@@ -23,7 +25,9 @@ def dataset(request: pytest.FixtureRequest) -> TensorDataset:
 
 
 @pytest.mark.parametrize("batch_size", [1, 2, 13])
-def test_tensor_data_loader_equivalence(dataset: TensorDataset, batch_size: int) -> None:
+def test_tensor_data_loader_equivalence(
+    dataset: TensorDataset, batch_size: int
+) -> None:
     loader1 = TensorDataLoader(dataset, batch_size)
     loader2 = DataLoader(dataset, batch_size)
     assert len(loader1) == len(loader2), "number of batches does not match"

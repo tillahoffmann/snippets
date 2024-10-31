@@ -19,6 +19,7 @@ class Timer:
             >>> timer.duration
             1...
     """
+
     def __init__(self) -> None:
         self.start: Optional[float] = None
         self.end: Optional[float] = None

@@ -37,7 +37,9 @@ def from_param_dict(params: "ParamDict", shapes: ShapeDict) -> "TensorLike":
     if not params:
         raise ValueError("The parameter dictionary is empty.")
     if set(params) != set(shapes):
-        raise ValueError("Parameter dictionary keys and shape dictionary keys do not match.")
+        raise ValueError(
+            "Parameter dictionary keys and shape dictionary keys do not match."
+        )
 
     batch_shape = None
     batch_shape_param_name = None
@@ -46,14 +48,16 @@ def from_param_dict(params: "ParamDict", shapes: ShapeDict) -> "TensorLike":
         # Get the shapes and verify the batch shapes match up.
         param_shape = shapes[param]
         param_ndim = len(param_shape)
-        param_batch_shape = value.shape[:len(value.shape) - param_ndim]
+        param_batch_shape = value.shape[: len(value.shape) - param_ndim]
 
         if batch_shape is None:
             batch_shape = param_batch_shape
             batch_shape_param_name = param
         elif batch_shape != param_batch_shape:
-            raise ValueError(f"Expected batch shape {batch_shape} based on "
-                             f"{batch_shape_param_name}; got {param_batch_shape} for {param}.")
+            raise ValueError(
+                f"Expected batch shape {batch_shape} based on "
+                f"{batch_shape_param_name}; got {param_batch_shape} for {param}."
+            )
 
         # Collapse the parameter shape.
         value = value.reshape((*batch_shape, -1))
@@ -61,9 +65,11 @@ def from_param_dict(params: "ParamDict", shapes: ShapeDict) -> "TensorLike":
 
     if value.__class__.__name__ == "ndarray":
         import numpy as np
+
         return np.concatenate(parts, axis=-1)
     else:
         import torch as th
+
         return th.concatenate(parts, axis=-1)
 
 
@@ -95,15 +101,19 @@ def to_param_dict(params: "TensorLike", shapes: ShapeDict) -> "ParamDict":
 
     size = sum(reduce(mul, shape, 1) for shape in shapes.values())
     if params.shape[-1] != size:
-        raise ValueError(f"Expected {size} elements based on shape dictionary; got "
-                         f"{params.shape[-1]}")
+        raise ValueError(
+            f"Expected {size} elements based on shape dictionary; got "
+            f"{params.shape[-1]}"
+        )
 
     parts = {}
     offset = 0
     batch_shape = params.shape[:-1]
     for param, shape in sorted(shapes.items()):
         size = reduce(mul, shape, 1)
-        parts[param] = params[..., offset:offset + size].reshape((*batch_shape, *shape))
+        parts[param] = params[..., offset : offset + size].reshape(
+            (*batch_shape, *shape)
+        )
         offset += size
 
     return parts

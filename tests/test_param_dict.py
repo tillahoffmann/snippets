@@ -25,16 +25,24 @@ def use_torch(request: pytest.FixtureRequest) -> bool:
 
 
 @pytest.fixture
-def params(batch_shape: Tuple[int], shapes: param_dict.ShapeDict, use_torch: bool) \
-        -> "param_dict.ParamDict":
+def params(
+    batch_shape: Tuple[int], shapes: param_dict.ShapeDict, use_torch: bool
+) -> "param_dict.ParamDict":
     return {
-        param: th.randn(batch_shape + shape) if use_torch else
-        np.random.normal(0, 1, batch_shape + shape) for param, shape in shapes.items()
+        param: (
+            th.randn(batch_shape + shape)
+            if use_torch
+            else np.random.normal(0, 1, batch_shape + shape)
+        )
+        for param, shape in shapes.items()
     }
 
 
-def test_param_dict_roundtrip(params: "param_dict.ParamDict", shapes: param_dict.ShapeDict,
-                              batch_shape: param_dict.ShapeDict) -> None:
+def test_param_dict_roundtrip(
+    params: "param_dict.ParamDict",
+    shapes: param_dict.ShapeDict,
+    batch_shape: param_dict.ShapeDict,
+) -> None:
     collapsed = param_dict.from_param_dict(params, shapes)
     assert collapsed.shape[:-1] == batch_shape
     reconstructed = param_dict.to_param_dict(collapsed, shapes)
@@ -44,8 +52,9 @@ def test_param_dict_roundtrip(params: "param_dict.ParamDict", shapes: param_dict
         np.testing.assert_array_equal(value, reconstructed[param])
 
 
-def test_from_param_dict_mismatched_batch_shape(params: "param_dict.ParamDict",
-                                                shapes: param_dict.ShapeDict) -> None:
+def test_from_param_dict_mismatched_batch_shape(
+    params: "param_dict.ParamDict", shapes: param_dict.ShapeDict
+) -> None:
     params["b"] = params["b"].reshape((1, *params["b"].shape))
     with pytest.raises(ValueError, match="Expected batch shape"):
         param_dict.from_param_dict(params, shapes)
@@ -66,8 +75,9 @@ def test_to_param_dict_empty() -> None:
         param_dict.to_param_dict(None, None)
 
 
-def test_to_param_dict_size_mismatch(params: "param_dict.ParamDict", shapes: param_dict.ShapeDict) \
-        -> None:
+def test_to_param_dict_size_mismatch(
+    params: "param_dict.ParamDict", shapes: param_dict.ShapeDict
+) -> None:
     collapsed = param_dict.from_param_dict(params, shapes)
     with pytest.raises(ValueError, match=r"Expected \d+ elements"):
         param_dict.to_param_dict(collapsed[..., :3], shapes)

@@ -8,20 +8,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version:
-          - '3.8'
-          - '3.9'
-          - '3.10'
-          - '3.11'
     steps:
       - name: Check out the repository
         uses: actions/checkout@v3
       - name: Setup python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.11'
           cache: pip
       - name: Install Python dependencies.
         run: pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt --no-dependencies

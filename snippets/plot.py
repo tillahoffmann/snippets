@@ -16,23 +16,31 @@ with raise_for_missing_modules():
     import numpy as np
 
 
-def plot_band(x: np.ndarray, ys: np.ndarray, *, ax: Optional[Axes] = None, ralpha: float = 0.2,
-              lower: float = 0.05, center: float = 0.5, upper: float = 0.95, **kwargs) \
-        -> Tuple[Line2D, PolyCollection]:
+def plot_band(
+    x: np.ndarray,
+    ys: np.ndarray,
+    *,
+    ax: Optional[Axes] = None,
+    ralpha: float = 0.2,
+    lower: float = 0.05,
+    center: float = 0.5,
+    upper: float = 0.95,
+    **kwargs,
+) -> Tuple[Line2D, PolyCollection]:
     """
     Plot a central line and shaded band for samples.
 
     Args:
         x: :math:`n`-vector of horizontal coordinates.
-        ys: :math:`m \\times n`-matrix comprising :math:`m` samples each at :math:`n` horizontal
-            coordinates.
+        ys: :math:`m \\times n`-matrix comprising :math:`m` samples each at :math:`n`
+            horizontal coordinates.
         ralpha: Alpha for the shaded band relative to the central line.
         lower: Quantile of the lower edge of the shaded band.
         center: Quantile of the central line.
         upper: Quantile of the upper edge of the shaded band.
         ax: Axes to use for plotting (defaults to :func:`matplotlib.pyplot.gca`).
-        **kwargs: Keyword arguments passed to :func:`matplotlib.axes.Axes.plot` for plotting the
-            central line.
+        **kwargs: Keyword arguments passed to :func:`matplotlib.axes.Axes.plot` for
+            plotting the central line.
 
     Example:
 
@@ -47,13 +55,18 @@ def plot_band(x: np.ndarray, ys: np.ndarray, *, ax: Optional[Axes] = None, ralph
     """
     ax = ax or plt.gca()
     lower_, center_, upper_ = np.quantile(ys, [lower, center, upper], axis=0)
-    line, = ax.plot(x, center_, **kwargs)
+    (line,) = ax.plot(x, center_, **kwargs)
     fill = ax.fill_between(x, lower_, upper_, alpha=(line.get_alpha() or 1.0) * ralpha)
     return line, fill
 
 
-def rounded_path(vertices: np.ndarray, radius: float, shrink: float = 0, closed: bool = False,
-                 readonly: bool = False) -> Path:
+def rounded_path(
+    vertices: np.ndarray,
+    radius: float,
+    shrink: float = 0,
+    closed: bool = False,
+    readonly: bool = False,
+) -> Path:
     """
     Create a path with rounded corners.
 
@@ -120,9 +133,14 @@ def rounded_path(vertices: np.ndarray, radius: float, shrink: float = 0, closed:
     return Path(*zip(*parts), closed=closed, readonly=readonly)
 
 
-def label_axes(axes: Union[Iterable[Axes], Axes],
-               labels: Optional[Union[Iterable[str], str]] = None, loc: str = 'top left',
-               offset: float = 0.05, label_offset: int = 0, **kwargs) -> List[Text]:
+def label_axes(
+    axes: Union[Iterable[Axes], Axes],
+    labels: Optional[Union[Iterable[str], str]] = None,
+    loc: str = "top left",
+    offset: float = 0.05,
+    label_offset: int = 0,
+    **kwargs,
+) -> List[Text]:
     """
     Add labels to axes.
 
@@ -150,7 +168,7 @@ def label_axes(axes: Union[Iterable[Axes], Axes],
     if isinstance(axes, Axes):
         axes = [axes]
     if labels is None:
-        labels = [f'({x})' for x in string.ascii_lowercase]
+        labels = [f"({x})" for x in string.ascii_lowercase]
     elif isinstance(labels, str):
         labels = [labels]
     if label_offset is not None:
@@ -160,9 +178,9 @@ def label_axes(axes: Union[Iterable[Axes], Axes],
     else:
         xfactor, yfactor = offset
     y, x = loc.split()
-    kwargs = {'ha': x, 'va': y, **kwargs}
-    xloc = xfactor if x == 'left' else (1 - xfactor)
-    yloc = yfactor if y == 'bottom' else (1 - yfactor)
+    kwargs = {"ha": x, "va": y, **kwargs}
+    xloc = xfactor if x == "left" else (1 - xfactor)
+    yloc = yfactor if y == "bottom" else (1 - yfactor)
     elements = []
     for ax, label in zip(axes, labels):
         elements.append(ax.text(xloc, yloc, label, transform=ax.transAxes, **kwargs))
@@ -180,8 +198,9 @@ def get_anchor(artist: Union[Artist, Text], hour: float) -> Point:
     Get an anchor on the boundary of an artist at the given "hour".
 
     Args:
-        artist: Artist on whose boundary to get an anchor. If a :class:`~matplotlib.text.Text`
-            instance and it has a bounding box patch, the bounding box patch is used.
+        artist: Artist on whose boundary to get an anchor. If a
+            :class:`~matplotlib.text.Text` instance and it has a bounding box patch, the
+            bounding box patch is used.
         hour: Direction of the anchor as the hour on a 12-hour clock.
 
     Returns:
@@ -189,8 +208,8 @@ def get_anchor(artist: Union[Artist, Text], hour: float) -> Point:
 
     .. note::
 
-        :meth:`matplotlib.Figure.draw_without_rendering` may need to be called for extents of
-        artists to be calculated correctly.
+        :meth:`matplotlib.Figure.draw_without_rendering` may need to be called for
+        extents of artists to be calculated correctly.
 
     Example:
 
@@ -204,7 +223,9 @@ def get_anchor(artist: Union[Artist, Text], hour: float) -> Point:
             fig, ax = plt.subplots()
             texts = [
                 ax.text(0.1, 0.5, "hello", fontsize=40),
-                ax.text(0.6, 0.5, "world", fontsize=40, bbox={"boxstyle": "round,pad=0.5"})
+                ax.text(
+                    0.6, 0.5, "world", fontsize=40, bbox={"boxstyle": "round,pad=0.5"}
+                ),
             ]
             ax.set_xlim(0, 1)
             ax.set_ylim(0, 1)
@@ -239,8 +260,9 @@ def get_anchor(artist: Union[Artist, Text], hour: float) -> Point:
     return Point(*point)
 
 
-def arrow_path(path: Path, length: float, width: Optional[float] = None, backward: bool = False) \
-        -> Path:
+def arrow_path(
+    path: Path, length: float, width: Optional[float] = None, backward: bool = False
+) -> Path:
     """
     Create an arrow at the end of a path.
 
@@ -277,14 +299,27 @@ def arrow_path(path: Path, length: float, width: Optional[float] = None, backwar
     delta = b - a
     delta /= np.linalg.norm(delta)
     orth = delta[::-1] * [-1, 1]
-    vertices = [b, b - length * delta + width / 2 * orth, b - length * delta - width / 2 * orth, b]
-    return Path(vertices, [Path.MOVETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY], closed=True)
+    vertices = [
+        b,
+        b - length * delta + width / 2 * orth,
+        b - length * delta - width / 2 * orth,
+        b,
+    ]
+    return Path(
+        vertices, [Path.MOVETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY], closed=True
+    )
 
 
-def dependence_heatmap(samples: Dict[str, np.ndarray],
-                       method: Literal["corrcoef", "nmi"] = "corrcoef", ax: Optional[Axes] = None,
-                       labels: bool = True, lines: bool = True, xlabel_rotation: float = -90,
-                       ylabel_rotation: float = 0, **kwargs) -> AxesImage:
+def dependence_heatmap(
+    samples: Dict[str, np.ndarray],
+    method: Literal["corrcoef", "nmi"] = "corrcoef",
+    ax: Optional[Axes] = None,
+    labels: bool = True,
+    lines: bool = True,
+    xlabel_rotation: float = -90,
+    ylabel_rotation: float = 0,
+    **kwargs,
+) -> AxesImage:
     """
     Show the dependence between parameters as a heatmap.
 
@@ -355,18 +390,25 @@ def dependence_heatmap(samples: Dict[str, np.ndarray],
                 axxline(loc - 1 / 2, color="gray", ls=":")
 
     if labels:
-        for axis, rotation in [(ax.xaxis, xlabel_rotation), (ax.yaxis, ylabel_rotation)]:
+        for axis, rotation in [
+            (ax.xaxis, xlabel_rotation),
+            (ax.yaxis, ylabel_rotation),
+        ]:
             axis.set_ticks(locs)
             axis.set_ticklabels(samples, rotation=rotation)
     return im
 
 
-def parameterization_mutual_info(x: np.ndarray, scale: np.ndarray, ax: Optional[Axes] = None,
-                                 labels: bool = True, **kwargs) \
-        -> Tuple[np.ndarray, np.ndarray, PathCollection]:
+def parameterization_mutual_info(
+    x: np.ndarray,
+    scale: np.ndarray,
+    ax: Optional[Axes] = None,
+    labels: bool = True,
+    **kwargs,
+) -> Tuple[np.ndarray, np.ndarray, PathCollection]:
     """
-    Scatter plot of the mutual information between scale and location parameters for centered and
-    non-centered parameterizations.
+    Scatter plot of the mutual information between scale and location parameters for
+    centered and non-centered parameterizations.
 
     Args:
         x: Centered parameter of interest.
@@ -376,23 +418,24 @@ def parameterization_mutual_info(x: np.ndarray, scale: np.ndarray, ax: Optional[
         **kwargs: Keyword arguments passed to :class:`.Axes.scatter`.
 
     Returns:
-        Tuple of mutual information between scale and centered parameter, mutual information between
-        scale and non-centered parameter, and points.
+        Tuple of mutual information between scale and centered parameter, mutual
+        information between scale and non-centered parameter, and points.
 
     Notes:
 
-        Standard *centered* parameterizations in hierarchical models often exhibit "funnels" if the
-        data do not strongly inform each parameter individually (see
-        `here <https://mc-stan.org/docs/stan-users-guide/reparameterization.html>`__ for details).
-        Choosing between the *centered* and *non-centered* parameterizations is often challenging
-        without inspecting scatter plots between parameters and the scale parameter of the
-        corresponding prior. This function estimates the mutual information between the scale
-        :math:`\\sigma` of the prior and both the *centered* parameterization
-        :math:`x \\sim \\mathsf{Normal}\\left(0, \\sigma^2\\right)` and the *non-centered*
-        parameterization :math:`x = \\sigma z` with
-        :math:`z \\sim \\mathsf{Normal}\\left(0, 1\\right)`. The parameterization with the lower
-        mutual information is generally preferable because it decouples the parameters under the
-        posterior.
+        Standard *centered* parameterizations in hierarchical models often exhibit
+        "funnels" if the data do not strongly inform each parameter individually (see
+        `here <https://mc-stan.org/docs/stan-users-guide/reparameterization.html>`__ for
+        details). Choosing between the *centered* and *non-centered* parameterizations
+        is often challenging without inspecting scatter plots between parameters and the
+        scale parameter of the corresponding prior. This function estimates the mutual
+        information between the scale :math:`\\sigma` of the prior and both the
+        *centered* parameterization
+        :math:`x \\sim \\mathsf{Normal}\\left(0, \\sigma^2\\right)` and the
+        *non-centered* parameterization :math:`x = \\sigma z` with
+        :math:`z \\sim \\mathsf{Normal}\\left(0, 1\\right)`. The parameterization with
+        the lower mutual information is generally preferable because it decouples the
+        parameters under the posterior.
 
     Example:
 
@@ -409,9 +452,11 @@ def parameterization_mutual_info(x: np.ndarray, scale: np.ndarray, ax: Optional[
             p = 10
             scale = np.exp(np.random.normal(0, 1, n))
 
-            # Example parameters dominated by the data, i.e., `x` is independent of `scale`.
+            # Example parameters dominated by the data, i.e., `x` is independent of
+            # `scale`.
             x1 = np.random.normal(0, 1, (n, p))
-            # Example parameters dominated by the prior, i.e., `x` is strongly informed by `scale`.
+            # Example parameters dominated by the prior, i.e., `x` is strongly informed
+            # by `scale`.
             x2 = x1 * scale[:, None]
 
             # Scatter the mutual information, lower is better.

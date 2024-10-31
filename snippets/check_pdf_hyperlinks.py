@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+from urllib.parse import urlparse
 from tqdm import tqdm
 from typing import Generator, List, Optional, Tuple
 from .util import get_first_docstring_paragraph, raise_for_missing_modules
@@ -38,6 +39,7 @@ class CheckPdfHyperlinks:
 
     .. sh:: python -m snippets.check_pdf_hyperlinks --help
     """
+
     @classmethod
     def run(cls, argv: Optional[List[str]] = None) -> None:
         parser = argparse.ArgumentParser(description=get_first_docstring_paragraph(cls))
@@ -45,36 +47,40 @@ class CheckPdfHyperlinks:
         parser.add_argument("filenames", nargs="+", type=Path)
         args: Args = parser.parse_args(argv)
         headers = {
-            "User-Agent": "snippets/check_pdf_hyperlinks",
+            # Some websites strictly check the user agent to be a browser.
+            "User-Agent": "Mozilla/5.0 (Macintosh)",
             "Accept": "*/*",
         }
 
         for filename in args.filenames:
             pagenumbers_and_urls = set(get_urls(filename))
             print(f"found {len(pagenumbers_and_urls)} urls in {filename}")
-            invalid_urls = {}
+            errors = {}
             valid_urls = set()
-            for page, url in tqdm(sorted(pagenumbers_and_urls), desc="checking hyperlinks"):
-                if url in invalid_urls:
+            for page, url in tqdm(
+                sorted(pagenumbers_and_urls), desc="checking hyperlinks"
+            ):
+                if url in errors:
                     valid = False
                 elif url in valid_urls:
                     valid = True
                 else:
                     try:
+                        parsed = urlparse(url)
                         response = requests.get(
                             url,
-                            allow_redirects=True,
+                            allow_redirects=not parsed.hostname.endswith("doi.org"),
                             headers=headers,
                         )
                         response.raise_for_status()
                         valid = True
                         valid_urls.add(url)
                     except (requests.HTTPError, requests.ConnectionError) as ex:
-                        invalid_urls[url] = str(ex)
+                        errors[url] = f"{ex.__class__.__name__}: {ex}"
                         valid = False
                 if not valid:
-                    print(f"found invalid url {url} on page {page + 1}: {invalid_urls[url]}")
-            print(f"found {len(invalid_urls)} invalid urls in {filename}")
+                    print(f"found invalid url {url} on page {page + 1}: {errors[url]}")
+            print(f"found {len(errors)} invalid urls in {filename}")
 
 
 if __name__ == "__main__":

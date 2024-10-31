@@ -11,7 +11,7 @@ def sample_params(n: int, p: int) -> np.ndarray:
 
 def sample_data(params: np.ndarray) -> np.ndarray:
     n = params.shape[0]
-    x = params + np.random.normal(0, .1, (n, 2))
+    x = params + np.random.normal(0, 0.1, (n, 2))
     return np.hstack([x, np.random.normal(0, 10, (n, 1))])
 
 
@@ -41,9 +41,13 @@ def observed_data(latent_params: np.ndarray) -> np.ndarray:
 
 
 @pytest.mark.parametrize("multi_output", [False, True])
-def test_posterior_mean_correlation(simulated_data: np.ndarray, simulated_params: np.ndarray,
-                                    observed_data: np.ndarray, latent_params: np.ndarray,
-                                    multi_output: bool) -> None:
+def test_posterior_mean_correlation(
+    simulated_data: np.ndarray,
+    simulated_params: np.ndarray,
+    observed_data: np.ndarray,
+    latent_params: np.ndarray,
+    multi_output: bool,
+) -> None:
     if not multi_output:
         simulated_params = np.squeeze(simulated_params)
 
@@ -54,7 +58,11 @@ def test_posterior_mean_correlation(simulated_data: np.ndarray, simulated_params
     assert pearsonr.statistic > 0.8 and pearsonr.pvalue < 0.01
 
     if multi_output or simulated_params.ndim > 1:
-        expected_shape = (observed_data.shape[0], sampler.n_samples, simulated_params.shape[1])
+        expected_shape = (
+            observed_data.shape[0],
+            sampler.n_samples,
+            simulated_params.shape[1],
+        )
     else:
         expected_shape = (observed_data.shape[0], sampler.n_samples)
     assert samples.shape == expected_shape
