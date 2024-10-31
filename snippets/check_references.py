@@ -11,7 +11,9 @@ with raise_for_missing_modules():
 
 
 BIB_PATTERN = re.compile(r"@\w+\{(.*?),")
-BBL_PATTERN = re.compile(r"(?:\\bibitem(?:\[.*?\])?\{(.*?)\})|(?:\\entry\{(.*?)\})", re.S)
+BBL_PATTERN = re.compile(
+    r"(?:\\bibitem(?:\[.*?\])?\{(.*?)\})|(?:\\entry\{(.*?)\})", re.S
+)
 DOI_PATTERN = re.compile(r"doi\s*=\s*\{\s*(.*?)\s*\},")
 
 
@@ -27,13 +29,20 @@ class CheckReferences:
 
     .. sh:: python -m snippets.check_references --help
     """
+
     @classmethod
     def run(cls, argv: Optional[List[str]] = None) -> None:
         parser = argparse.ArgumentParser(description=get_first_docstring_paragraph(cls))
         parser.add_argument("bib", help="bibtex file containing references", type=Path)
-        parser.add_argument("bbl", help="compiled bibliography of formatted references", nargs="?",
-                            type=Path)
-        parser.add_argument("--check-dois", action="store_true", help="check dois in the bib file")
+        parser.add_argument(
+            "bbl",
+            help="compiled bibliography of formatted references",
+            nargs="?",
+            type=Path,
+        )
+        parser.add_argument(
+            "--check-dois", action="store_true", help="check dois in the bib file"
+        )
         args: Args = parser.parse_args(argv)
 
         bib = args.bib.read_text()
@@ -54,7 +63,9 @@ class CheckReferences:
 
             missing = bbl_refs - bib_refs
             if missing:
-                print(f"{len(missing)} missing references: {', '.join(sorted(missing))}")
+                print(
+                    f"{len(missing)} missing references: {', '.join(sorted(missing))}"
+                )
             else:
                 print("no missing references")
 
@@ -62,7 +73,9 @@ class CheckReferences:
         if args.check_dois:
             dois = re.findall(DOI_PATTERN, bib)
             for doi in tqdm(dois, desc="checking dois"):
-                response = requests.get(f"https://dx.doi.org/{doi}", allow_redirects=False)
+                response = requests.get(
+                    f"https://dx.doi.org/{doi}", allow_redirects=False
+                )
                 if response.status_code != 302:
                     print(f"doi {doi} could not be resolved")
 

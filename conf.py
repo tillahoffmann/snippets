@@ -34,14 +34,20 @@ def setup(app: Sphinx):
     app.add_role("docitem", docitem)
 
 
-def docitem(name: str, rawtext: str, text: str, lineno: int, inliner: Inliner,
-            options: Optional[Dict[str, Any]] = None, content: Optional[List[str]] = None) \
-        -> Tuple[List[nodes.Node], List[str]]:
+def docitem(
+    name: str,
+    rawtext: str,
+    text: str,
+    lineno: int,
+    inliner: Inliner,
+    options: Optional[Dict[str, Any]] = None,
+    content: Optional[List[str]] = None,
+) -> Tuple[List[nodes.Node], List[str]]:
     """
     Extract the first paragraph of the docstring with nested parsing based on
     https://stackoverflow.com/a/68865718/1150961. See
-    https://docutils.sourceforge.io/docs/howto/rst-roles.html#define-the-role-function for a
-    description of the arguments.
+    https://docutils.sourceforge.io/docs/howto/rst-roles.html#define-the-role-function
+    for a description of the arguments.
     """
     options = options or {}
     content = content or []
@@ -65,7 +71,7 @@ def docitem(name: str, rawtext: str, text: str, lineno: int, inliner: Inliner,
         reporter=inliner.reporter,
         language=inliner.language,
     )
-    parent = nodes.inline(rawtext, '', **options)
+    parent = nodes.inline(rawtext, "", **options)
     processed, messages = inliner.parse(paragraph, lineno, memo, parent)
     parent += processed
     return [parent], messages

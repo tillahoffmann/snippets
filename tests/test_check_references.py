@@ -5,23 +5,29 @@ from typing import List
 from unittest import mock
 
 
-@pytest.mark.parametrize("bib, bbl, patterns", [
-    (
-        r"@article{key, ...} @book{other, ...}",
-        r"",
-        [r"extra references: key, other", r"no missing references"],
-    ),
-    (
-        r"", r"\bibitem[{Bishop(2006)}]{Bishop2006}",
-        [r"missing references: Bishop2006", r"no extra references"],
-    ),
-    (
-        r"@article{key, ...} @book{other, ...}",
-        r"\bibitem[{Bishop(2006)}]{Bishop2006} \bibitem{key}",
-        [r"missing references: Bishop2006", r"extra references: other"]),
-])
-def test_check_references_bbl(bib: str, bbl: str, patterns: List[str],
-                              capsys: pytest.CaptureFixture) -> None:
+@pytest.mark.parametrize(
+    "bib, bbl, patterns",
+    [
+        (
+            r"@article{key, ...} @book{other, ...}",
+            r"",
+            [r"extra references: key, other", r"no missing references"],
+        ),
+        (
+            r"",
+            r"\bibitem[{Bishop(2006)}]{Bishop2006}",
+            [r"missing references: Bishop2006", r"no extra references"],
+        ),
+        (
+            r"@article{key, ...} @book{other, ...}",
+            r"\bibitem[{Bishop(2006)}]{Bishop2006} \bibitem{key}",
+            [r"missing references: Bishop2006", r"extra references: other"],
+        ),
+    ],
+)
+def test_check_references_bbl(
+    bib: str, bbl: str, patterns: List[str], capsys: pytest.CaptureFixture
+) -> None:
     with mock.patch("pathlib.Path.read_text", side_effect=[bib, bbl]):
         CheckReferences.run(["bib-file", "bbl-file"])
 

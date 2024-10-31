@@ -14,16 +14,17 @@ class StopOnPlateau:
     :class:`torch.optim.lr_scheduler.ReduceLROnPlateau`.
 
     Args:
-        mode: One of :code:`min` or :code:`max`. In :code:`min` mode, training will stop when the
-            quantity monitored has stopped decreasing; in :code:`max` mode training will stop when
-            the quantity monitored has stopped increasing.
+        mode: One of :code:`min` or :code:`max`. In :code:`min` mode, training will stop
+            when the quantity monitored has stopped decreasing; in :code:`max` mode
+            training will stop when the quantity monitored has stopped increasing.
         patience: Number of epochs without improvement after which training will stop.
-        threshold: Threshold for measuring the new optimum, to only focus on significant changes.
+        threshold: Threshold for measuring the new optimum, to only focus on significant
+            changes.
         threshold_mode: One of :code:`rel` or :code:`abs`. For :code:`rel`,
             :code:`dynamic_threshold = best * (1 + threshold)` in :code:`max` mode or
-            :code:`dynamic_threshold = best * (1 - threshold)` in :code:`min` mode. For :code:`abs`,
-            :code:`dynamic_threshold = best + threshold` in
-            :code:`max` mode or :code:dynamic_threshold = best - threshold` in :code:`min` mode.
+            :code:`dynamic_threshold = best * (1 - threshold)` in :code:`min` mode. For
+            :code:`abs`, :code:`dynamic_threshold = best + threshold` in :code:`max`
+            mode or :code:dynamic_threshold = best - threshold` in :code:`min` mode.
 
     Example:
 
@@ -40,8 +41,14 @@ class StopOnPlateau:
             False
             True
     """
-    def __init__(self, mode: Literal["min", "max"] = "min", patience: int = 20,
-                 threshold: float = 1e-4, threshold_mode: Literal["rel", "abs"] = "rel") -> None:
+
+    def __init__(
+        self,
+        mode: Literal["min", "max"] = "min",
+        patience: int = 20,
+        threshold: float = 1e-4,
+        threshold_mode: Literal["rel", "abs"] = "rel",
+    ) -> None:
         self.mode = mode
         self.patience = patience
         self.threshold = threshold
@@ -49,7 +56,7 @@ class StopOnPlateau:
         if self.mode == "min":
             self.best = float("inf")
         elif self.mode == "max":
-            self.best = - float("inf")
+            self.best = -float("inf")
         else:
             raise ValueError(self.mode)
         self.num_bad_epochs = 0
@@ -102,23 +109,31 @@ class StopOnPlateau:
             raise ValueError(self.mode, self.threshold_mode)
 
     @classmethod
-    def from_scheduler(cls: Type[S], scheduler: torch.optim.lr_scheduler.ReduceLROnPlateau,
-                       patience_factor: float = 1, patience: Optional[int] = None) -> S:
+    def from_scheduler(
+        cls: Type[S],
+        scheduler: torch.optim.lr_scheduler.ReduceLROnPlateau,
+        patience_factor: float = 1,
+        patience: Optional[int] = None,
+    ) -> S:
         """
         Create a :class:`.StopOnPlateau` instance configured based on a
         :class:`~torch.optim.lr_scheduler.ReduceLROnPlateau`.
 
         Args:
             scheduler: Learning rate scheduler whose configuration to copy.
-            patience_factor: Factor by which to scale the patience of the learning rate scheduler.
-            patience: Patience of the instance (takes precedence over :code:`patience_factor`).
+            patience_factor: Factor by which to scale the patience of the learning rate
+                scheduler.
+            patience: Patience of the instance (takes precedence over
+                :code:`patience_factor`).
 
         Returns:
             Instance configured based on supplied
             :class:`~torch.optim.lr_scheduler.ReduceLROnPlateau`.
         """
         patience = patience or int(patience_factor * scheduler.patience)
-        return cls(scheduler.mode, patience, scheduler.threshold, scheduler.threshold_mode)
+        return cls(
+            scheduler.mode, patience, scheduler.threshold, scheduler.threshold_mode
+        )
 
 
 class Affine(torch.nn.Module):
@@ -142,8 +157,13 @@ class Affine(torch.nn.Module):
             >>> affine(x)
             tensor([1., 3., 5.])
     """
-    def __init__(self, loc: torch.Tensor, scale: torch.Tensor,
-                 dtype: Optional[torch.dtype] = None) -> None:
+
+    def __init__(
+        self,
+        loc: torch.Tensor,
+        scale: torch.Tensor,
+        dtype: Optional[torch.dtype] = None,
+    ) -> None:
         super().__init__()
         dtype = dtype or torch.get_default_dtype()
         self.loc = torch.as_tensor(loc, dtype=dtype)

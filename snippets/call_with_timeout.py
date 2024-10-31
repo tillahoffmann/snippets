@@ -61,11 +61,13 @@ def call_with_timeout(timeout: float, target: Callable, *args, **kwargs) -> Any:
             >>> call_with_timeout(1.0, sleep, 2.0)
             Traceback (most recent call last):
                 ...
-            TimeoutError: call to <built-in function sleep> did not complete in 1.0 seconds
+            TimeoutError: call to <built-in function sleep> did not complete in 1.0
+            seconds
     """
     queue = multiprocessing.Queue()
-    process = multiprocessing.Process(target=_wrapper, args=(queue, target, *args), kwargs=kwargs,
-                                      daemon=True)
+    process = multiprocessing.Process(
+        target=_wrapper, args=(queue, target, *args), kwargs=kwargs, daemon=True
+    )
     process.start()
 
     try:
@@ -74,8 +76,8 @@ def call_with_timeout(timeout: float, target: Callable, *args, **kwargs) -> Any:
         raise TimeoutError(f"call to {target} did not complete in {timeout} seconds")
     finally:
         if process.is_alive():
-            # Try to terminate the process and all its children. If not possible, kill them.
-            # (https://stackoverflow.com/a/4229404/1150961).
+            # Try to terminate the process and all its children. If not possible, kill
+            # them (https://stackoverflow.com/a/4229404/1150961).
             process = psutil.Process(process.pid)
             processes = [process, *process.children(recursive=True)]
             for func in [psutil.Process.terminate, psutil.Process.kill]:

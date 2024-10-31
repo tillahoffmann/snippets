@@ -10,15 +10,25 @@ from unittest import mock
 @pytest.mark.parametrize("patience", [3, 7])
 @pytest.mark.parametrize("threshold", [0.1, 0.2])
 @pytest.mark.parametrize("threshold_mode", ["abs", "rel"])
-def test_stop_on_plateau(mode: str, patience: int, threshold: float, threshold_mode: str) -> None:
-    # Construct a dummy learning rate scheduler which should behave the same as our `StopOnPlateau`.
+def test_stop_on_plateau(
+    mode: str, patience: int, threshold: float, threshold_mode: str
+) -> None:
+    # Construct a dummy learning rate scheduler which should behave the same as our
+    # `StopOnPlateau`.
     module = torch.nn.Linear(2, 3)
     optim = torch.optim.Adam(module.parameters())
-    scheduler = ReduceLROnPlateau(optim, mode=mode, patience=patience, threshold=threshold,
-                                  threshold_mode=threshold_mode)
+    scheduler = ReduceLROnPlateau(
+        optim,
+        mode=mode,
+        patience=patience,
+        threshold=threshold,
+        threshold_mode=threshold_mode,
+    )
     stop = StopOnPlateau.from_scheduler(scheduler)
 
-    with mock.patch("torch.optim.lr_scheduler.ReduceLROnPlateau._reduce_lr") as _reduce_lr:
+    with mock.patch(
+        "torch.optim.lr_scheduler.ReduceLROnPlateau._reduce_lr"
+    ) as _reduce_lr:
         while True:
             value = np.exp(np.random.normal(0, 1))
             scheduler.step(value)
@@ -38,14 +48,29 @@ def test_stop_on_plateau_invalid() -> None:
         stop.is_better(3, 4)
 
 
-@pytest.mark.parametrize("loc_shape, scale_shape, value_shape, expected_shape", [
-    ((3,), (3, 4), (17, 4), (17, 3)),
-    ((), (1, 2,), (7, 2), (7, 1)),
-    ((3,), (), (13, 3), (13, 3)),
-    ((), (), (15, 5), (15, 5)),
-])
-def test_affine(loc_shape: torch.Size, scale_shape: torch.Size, value_shape: torch.Size,
-                expected_shape: torch.Size) -> None:
+@pytest.mark.parametrize(
+    "loc_shape, scale_shape, value_shape, expected_shape",
+    [
+        ((3,), (3, 4), (17, 4), (17, 3)),
+        (
+            (),
+            (
+                1,
+                2,
+            ),
+            (7, 2),
+            (7, 1),
+        ),
+        ((3,), (), (13, 3), (13, 3)),
+        ((), (), (15, 5), (15, 5)),
+    ],
+)
+def test_affine(
+    loc_shape: torch.Size,
+    scale_shape: torch.Size,
+    value_shape: torch.Size,
+    expected_shape: torch.Size,
+) -> None:
     # Create module.
     loc = torch.randn(loc_shape)
     scale = torch.randn(scale_shape)

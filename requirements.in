@@ -1,19 +1,19 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
 -e file:.
-flake8
+black
 furo
 importlib-metadata  # Required by sphinx on linux.
 importlib_resources  # Required by matplotlib on linux.
 matplotlib  # Required by `plot`.
-numpy<1.25  # For python 3.8; required by `plot`.
+numpy<1.25  # Required by `plot`.
 psutil  # Required by `call_with_timeout`.
 pypdf
 pytest
 pytest-cov
 pytz  # Required by sphinx on linux.
 scikit-learn  # Required by `nearest_neighbor_sampler`, `stats`, and part of `plot`.
-scipy<1.11  # Required for python 3.8.
-sphinx<7.2  # Required for python 3.8.
+scipy
+sphinx
 sphinxcontrib-shtest
 torch
 tqdm

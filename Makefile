@@ -1,4 +1,4 @@
-.PHONY : docs tests
+.PHONY : docs doctests lint tests
 
 all : lint doctests docs tests
 
@@ -7,7 +7,7 @@ clean :
 	rm .coverage*
 
 requirements.txt : requirements.in setup.py
-	docker run --rm -it -v `pwd`:/workspace -w /workspace python:3.8 bash -c 'pip install pip-tools && pip-compile -v --resolver=backtracking'
+	pip-compile -v
 
 docs :
 	rm -rf docs/_build
@@ -22,7 +22,7 @@ tests :
 	pytest -v --cov=snippets --cov-report=term-missing --cov-fail-under=100
 
 lint:
-	flake8
+	black --check .
 
 MODULE_PATHS = $(filter-out __%,$(notdir $(wildcard snippets/*)))
 MODULES = ${MODULE_PATHS:.py=}
