@@ -6,6 +6,7 @@ from typing import Generator, List, Optional, Tuple
 from .util import get_first_docstring_paragraph, raise_for_missing_modules
 
 with raise_for_missing_modules():
+    import mechanize
     import pypdf
     import requests
 
@@ -33,6 +34,33 @@ def get_urls(filename: Path) -> Generator[Tuple[int, str], None, None]:
                 yield (page.page_number, uri)
 
 
+def validate_url(url):
+    headers = {
+        # Some websites strictly check the user agent to be a browser.
+        "User-Agent": "Mozilla/5.0 (Macintosh)",
+        "Accept": "*/*",
+    }
+
+    try:
+        parsed = urlparse(url)
+        response = requests.get(
+            url,
+            allow_redirects=not parsed.hostname.endswith("doi.org"),
+            headers=headers,
+        )
+        response.raise_for_status()
+        return  # We successfully validated the url using requests.
+    except (requests.HTTPError, requests.ConnectionError):
+        # Failed to validate url using `requests`; trying `mechanize` ...
+        pass
+
+    # Try to send the request using a browser.
+    browser = mechanize.Browser()
+    browser.addheaders = list(headers.items())
+    browser.set_handle_robots(False)
+    response = browser.open(url)
+
+
 class CheckPdfHyperlinks:
     """
     Check LaTeX documents for missing or unused references.
@@ -46,11 +74,6 @@ class CheckPdfHyperlinks:
         parser = argparse.ArgumentParser()
         parser.add_argument("filenames", nargs="+", type=Path)
         args: Args = parser.parse_args(argv)
-        headers = {
-            # Some websites strictly check the user agent to be a browser.
-            "User-Agent": "Mozilla/5.0 (Macintosh)",
-            "Accept": "*/*",
-        }
 
         for filename in args.filenames:
             pagenumbers_and_urls = set(get_urls(filename))
@@ -66,16 +89,14 @@ class CheckPdfHyperlinks:
                     valid = True
                 else:
                     try:
-                        parsed = urlparse(url)
-                        response = requests.get(
-                            url,
-                            allow_redirects=not parsed.hostname.endswith("doi.org"),
-                            headers=headers,
-                        )
-                        response.raise_for_status()
+                        validate_url(url)
                         valid = True
                         valid_urls.add(url)
-                    except (requests.HTTPError, requests.ConnectionError) as ex:
+                    except (
+                        requests.HTTPError,
+                        requests.ConnectionError,
+                        mechanize.HTTPError,
+                    ) as ex:
                         errors[url] = f"{ex.__class__.__name__}: {ex}"
                         valid = False
                 if not valid:
