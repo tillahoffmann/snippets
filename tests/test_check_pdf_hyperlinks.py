@@ -11,9 +11,10 @@ def remove_colors(text: str) -> str:
 
 
 def test_check_pdf_hyperlinks_error(capsys: pytest.CaptureFixture) -> None:
-    check_pdf_hyperlinks.CheckPdfHyperlinks.run(
-        ["tests/check_pdf_hyperlinks_error.pdf"]
-    )
+    with pytest.raises(SystemExit):
+        check_pdf_hyperlinks.CheckPdfHyperlinks.run(
+            ["tests/check_pdf_hyperlinks_error.pdf"]
+        )
     out, _ = capsys.readouterr()
     out = remove_colors(out)
     assert "found 4 urls" in out

@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 from urllib.error import URLError
 from urllib.parse import urlparse
+import sys
 from tqdm import tqdm
 from typing import Generator, List, Optional, Tuple
 from .util import get_first_docstring_paragraph, raise_for_missing_modules
@@ -80,6 +81,8 @@ class CheckPdfHyperlinks:
         parser.add_argument("filenames", nargs="+", type=Path)
         args: Args = parser.parse_args(argv)
 
+        total_errors = 0
+
         for filename in args.filenames:
             pagenumbers_and_urls = set(get_urls(filename))
             print(f"found {len(pagenumbers_and_urls)} urls in `{filename}`")
@@ -119,6 +122,10 @@ class CheckPdfHyperlinks:
                     f"{colorama.Fore.RED}{len(errors)} of {len(pagenumbers_and_urls)} "
                     f"urls are invalid{colorama.Fore.RESET} in `{filename}`"
                 )
+                total_errors += len(errors)
+
+        if total_errors:
+            sys.exit(1)
 
 
 if __name__ == "__main__":
