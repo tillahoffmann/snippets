@@ -62,7 +62,8 @@ def validate_url(url):
     browser.addheaders = list(headers.items())
     browser.set_handle_robots(False)
     response = browser.open(url)
-    assert not response.errno
+    # We might never get here, but just in case ...
+    assert not response.errno  # pragma: no cover
 
 
 class CheckPdfHyperlinks:
