@@ -1,11 +1,13 @@
 import argparse
 from pathlib import Path
+from urllib.error import URLError
 from urllib.parse import urlparse
 from tqdm import tqdm
 from typing import Generator, List, Optional, Tuple
 from .util import get_first_docstring_paragraph, raise_for_missing_modules
 
 with raise_for_missing_modules():
+    import colorama
     import mechanize
     import pypdf
     import requests
@@ -37,8 +39,9 @@ def get_urls(filename: Path) -> Generator[Tuple[int, str], None, None]:
 def validate_url(url):
     headers = {
         # Some websites strictly check the user agent to be a browser.
-        "User-Agent": "Mozilla/5.0 (Macintosh)",
-        "Accept": "*/*",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Safari/605.1.15",
+        "Accept": "text/html,*/*",
     }
 
     try:
@@ -59,6 +62,7 @@ def validate_url(url):
     browser.addheaders = list(headers.items())
     browser.set_handle_robots(False)
     response = browser.open(url)
+    assert not response.errno
 
 
 class CheckPdfHyperlinks:
@@ -77,7 +81,7 @@ class CheckPdfHyperlinks:
 
         for filename in args.filenames:
             pagenumbers_and_urls = set(get_urls(filename))
-            print(f"found {len(pagenumbers_and_urls)} urls in {filename}")
+            print(f"found {len(pagenumbers_and_urls)} urls in `{filename}`")
             errors = {}
             valid_urls = set()
             for page, url in tqdm(
@@ -95,13 +99,25 @@ class CheckPdfHyperlinks:
                     except (
                         requests.HTTPError,
                         requests.ConnectionError,
-                        mechanize.HTTPError,
+                        URLError,
                     ) as ex:
                         errors[url] = f"{ex.__class__.__name__}: {ex}"
                         valid = False
                 if not valid:
-                    print(f"found invalid url {url} on page {page + 1}: {errors[url]}")
-            print(f"found {len(errors)} invalid urls in {filename}")
+                    print(
+                        f"{colorama.Fore.RED}found invalid url{colorama.Fore.RESET} "
+                        f"`{url}` on page {page + 1}: {errors[url]}"
+                    )
+            if not errors:
+                print(
+                    f"{colorama.Fore.GREEN}all {len(pagenumbers_and_urls)} urls "
+                    f"ok{colorama.Fore.RESET} in `{filename}`"
+                )
+            else:
+                print(
+                    f"{colorama.Fore.RED}{len(errors)} of {len(pagenumbers_and_urls)} "
+                    f"urls are invalid{colorama.Fore.RESET} in `{filename}`"
+                )
 
 
 if __name__ == "__main__":
