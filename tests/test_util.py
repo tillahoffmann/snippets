@@ -5,9 +5,10 @@ from snippets.util import get_first_docstring_paragraph, raise_for_missing_modul
 def test_raise_for_missing_modules() -> None:
     with raise_for_missing_modules():
         __import__("sys")
-    with pytest.raises(
-        RuntimeError, match="install module `xxx`"
-    ), raise_for_missing_modules():
+    with (
+        pytest.raises(RuntimeError, match="install module `xxx`"),
+        raise_for_missing_modules(),
+    ):
         __import__("xxx")
 
 

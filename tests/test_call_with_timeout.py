@@ -77,8 +77,9 @@ def test_subprocess(binary_path: Path) -> None:
 
 def test_subprocess_ignoring_sigterm(binary_path: Path) -> None:
     # Make sure we raise a timeout error due to the infinite while loop.
-    with mock.patch("snippets.call_with_timeout.JOIN_TIMEOUT", 1), pytest.raises(
-        TimeoutError
+    with (
+        mock.patch("snippets.call_with_timeout.JOIN_TIMEOUT", 1),
+        pytest.raises(TimeoutError),
     ):
         call_with_timeout(1, subprocess.check_call, [binary_path, "SIGTERM"])
 
@@ -86,9 +87,11 @@ def test_subprocess_ignoring_sigterm(binary_path: Path) -> None:
 def test_subprocess_ignoring_sigterm_zombie(binary_path: Path) -> None:
     # Make sure we raise a timeout error due to the infinite while loop.
     processes: List[psutil.Process] = []
-    with mock.patch("snippets.call_with_timeout.JOIN_TIMEOUT", 0.5), mock.patch(
-        "psutil.Process.kill", processes.append
-    ), pytest.raises(ZombieProcessError):
+    with (
+        mock.patch("snippets.call_with_timeout.JOIN_TIMEOUT", 0.5),
+        mock.patch("psutil.Process.kill", processes.append),
+        pytest.raises(ZombieProcessError),
+    ):
         call_with_timeout(1, subprocess.check_call, [binary_path, "SIGTERM"])
     assert len(processes) == 1
     # Kill the process because we didn't due to the patch.

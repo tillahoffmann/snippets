@@ -6,9 +6,6 @@ clean :
 	rm -rf docs/_build htmlcov
 	rm .coverage*
 
-requirements.txt : requirements.in setup.py
-	pip-compile -v
-
 docs :
 	rm -rf docs/_build
 	sphinx-build -W . docs/_build
