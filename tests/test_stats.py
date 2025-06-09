@@ -36,10 +36,10 @@ def test_bounded_normalization() -> None:
 
     # Check that the normalization is correct with bounds...
     estimator = GaussianKernelDensity(bounds=(0, 1)).fit(x)
-    norm = np.trapz(np.exp(estimator.score_samples(lin[:, None])), lin)
+    norm = np.trapezoid(np.exp(estimator.score_samples(lin[:, None])), lin)
     assert abs(norm - 1) < 1e-6
 
     # ...and is wrong without bounds.
     estimator = GaussianKernelDensity().fit(x)
-    norm = np.trapz(np.exp(estimator.score_samples(lin[:, None])), lin)
+    norm = np.trapezoid(np.exp(estimator.score_samples(lin[:, None])), lin)
     assert abs(norm - 1) > 0.01

@@ -9,20 +9,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v3
-      - name: Setup python
-        uses: actions/setup-python@v4
+      - uses: "actions/checkout@v4"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: '3.11'
-          cache: pip
-      - name: Install Python dependencies.
-        run: pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt --no-dependencies
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      - name: Install project
+        run: uv sync --all-groups
       - name: Lint the code.
-        run: make lint
+        run: uv run make lint
       - name: Run tests.
-        run: make tests
+        run: uv run make tests
       - name: Run doctests.
-        run: make doctests
+        run: uv run make doctests
       - name: Build the documentation.
-        run: make docs
+        run: uv run make docs

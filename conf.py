@@ -25,7 +25,7 @@ intersphinx_mapping = {
 }
 exclude_patterns = [
     "README.rst",
-    "venv",
+    ".venv",
 ]
 plot_include_source = True
 
